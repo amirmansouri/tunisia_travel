@@ -14,8 +14,8 @@ export async function GET() {
       supabase.from('visitors').select('*', { count: 'exact', head: true }),
     ]);
 
-    // Get recent activity
-    const [recentVisitors, recentReservations] = await Promise.all([
+    // Get recent activity and last ping
+    const [recentVisitors, recentReservations, lastPing] = await Promise.all([
       supabase
         .from('visitors')
         .select('created_at')
@@ -28,6 +28,12 @@ export async function GET() {
         .order('created_at', { ascending: false })
         .limit(1)
         .returns<Array<{ created_at: string }>>(),
+      supabase
+        .from('system_pings')
+        .select('pinged_at, status')
+        .order('pinged_at', { ascending: false })
+        .limit(1)
+        .returns<Array<{ pinged_at: string; status: string }>>(),
     ]);
 
     // Estimate database size (rough approximation)
@@ -57,6 +63,7 @@ export async function GET() {
         last_visitor: recentVisitors.data?.[0]?.created_at || null,
         last_reservation: recentReservations.data?.[0]?.created_at || null,
       },
+      last_ping: lastPing.data?.[0]?.pinged_at || null,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {

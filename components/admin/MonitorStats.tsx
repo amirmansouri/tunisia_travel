@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { RefreshCw, CheckCircle, AlertCircle, Activity, HardDrive, Users, FileText, Calendar } from 'lucide-react';
+import { RefreshCw, CheckCircle, AlertCircle, Activity, HardDrive, Users, FileText, Calendar, Clock } from 'lucide-react';
 
 interface Stats {
   counts: {
@@ -20,6 +20,7 @@ interface Stats {
     last_visitor: string | null;
     last_reservation: string | null;
   };
+  last_ping: string | null;
   timestamp: string;
 }
 
@@ -48,11 +49,11 @@ export default function MonitorStats() {
     setPingResult(null);
 
     try {
-      const response = await fetch('/api/health');
+      const response = await fetch('/api/cron/ping');
       const data = await response.json();
 
       if (response.ok) {
-        setPingResult({ success: true, message: data.message || 'Database is healthy!' });
+        setPingResult({ success: true, message: data.message || 'Database pinged successfully!' });
         // Refresh stats after ping
         fetchStats();
       } else {
@@ -80,10 +81,38 @@ export default function MonitorStats() {
     });
   };
 
+  const formatRelativeTime = (dateString: string | null) => {
+    if (!dateString) return 'Never';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+
+    if (diffMinutes < 1) return 'Just now';
+    if (diffMinutes < 60) return `${diffMinutes} min ago`;
+    if (diffHours < 24) return `${diffHours} hours ago`;
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    return formatDate(dateString);
+  };
+
   const getUsageColor = (percent: number) => {
     if (percent < 50) return 'bg-green-500';
     if (percent < 80) return 'bg-yellow-500';
     return 'bg-red-500';
+  };
+
+  const getPingStatus = (lastPing: string | null) => {
+    if (!lastPing) return { color: 'text-gray-500', status: 'No ping recorded' };
+    const date = new Date(lastPing);
+    const now = new Date();
+    const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 5) return { color: 'text-green-600', status: 'Active' };
+    if (diffDays < 7) return { color: 'text-yellow-600', status: 'Ping soon' };
+    return { color: 'text-red-600', status: 'May be paused' };
   };
 
   if (loading) {
@@ -98,14 +127,16 @@ export default function MonitorStats() {
     );
   }
 
+  const pingStatus = getPingStatus(stats?.last_ping || null);
+
   return (
     <div className="space-y-6">
-      {/* Database Health Check */}
+      {/* Auto-Ping Status */}
       <div className="bg-white rounded-xl p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold text-gray-900 flex items-center">
             <Activity className="h-5 w-5 mr-2 text-green-600" />
-            Database Health
+            Auto-Ping Status
           </h3>
           <button
             onClick={pingDatabase}
@@ -149,23 +180,36 @@ export default function MonitorStats() {
           </div>
         )}
 
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-sm text-blue-800">
-            <strong>Auto-ping Setup:</strong> To keep Supabase active, set up a free cron job at{' '}
-            <a
-              href="https://cron-job.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline"
-            >
-              cron-job.org
-            </a>{' '}
-            to ping this URL every 5 days:
-          </p>
-          <code className="block mt-2 p-2 bg-white rounded text-xs break-all">
-            https://tunisia-travel-one.vercel.app/api/health
-          </code>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center text-gray-500 mb-1">
+              <Clock className="h-4 w-4 mr-1" />
+              <span className="text-sm">Last Auto-Ping</span>
+            </div>
+            <p className="font-semibold text-gray-900">
+              {formatRelativeTime(stats?.last_ping || null)}
+            </p>
+            <p className="text-xs text-gray-500">
+              {stats?.last_ping ? formatDate(stats.last_ping) : ''}
+            </p>
+          </div>
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center text-gray-500 mb-1">
+              <Activity className="h-4 w-4 mr-1" />
+              <span className="text-sm">Database Status</span>
+            </div>
+            <p className={`font-semibold ${pingStatus.color}`}>
+              {pingStatus.status}
+            </p>
+            <p className="text-xs text-gray-500">
+              Auto-ping runs every 5 days
+            </p>
+          </div>
         </div>
+
+        <p className="text-xs text-gray-500 mt-4 p-3 bg-blue-50 rounded-lg">
+          <strong>Note:</strong> Vercel automatically pings your database every 5 days to prevent Supabase from pausing due to inactivity.
+        </p>
       </div>
 
       {/* Storage Usage */}
