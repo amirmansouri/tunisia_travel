@@ -49,7 +49,7 @@ export interface CreateReservationInput {
   message?: string;
 }
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       programs: {
@@ -63,5 +63,8 @@ export interface Database {
         Update: Partial<Omit<Reservation, 'id' | 'created_at'>>;
       };
     };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
   };
 }

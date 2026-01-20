@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient, supabase } from '@/lib/supabase';
+import { Program } from '@/types/database';
 
 // GET - Fetch all published programs (public)
 export async function GET() {
@@ -8,7 +9,8 @@ export async function GET() {
       .from('programs')
       .select('*')
       .eq('published', true)
-      .order('start_date', { ascending: true });
+      .order('start_date', { ascending: true })
+      .returns<Program[]>();
 
     if (error) {
       throw error;
@@ -48,20 +50,22 @@ export async function POST(request: NextRequest) {
 
     const adminClient = createAdminClient();
 
+    const insertData = {
+      title,
+      description,
+      price: parseFloat(price),
+      start_date,
+      end_date,
+      location,
+      images: images || [],
+      published: published || false,
+    };
+
     const { data, error } = await adminClient
       .from('programs')
-      .insert({
-        title,
-        description,
-        price: parseFloat(price),
-        start_date,
-        end_date,
-        location,
-        images: images || [],
-        published: published || false,
-      })
+      .insert(insertData as never)
       .select()
-      .single();
+      .single<Program>();
 
     if (error) {
       throw error;

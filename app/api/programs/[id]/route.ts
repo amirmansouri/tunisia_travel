@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient, supabase } from '@/lib/supabase';
+import { Program } from '@/types/database';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       .select('*')
       .eq('id', resolvedParams.id)
       .eq('published', true)
-      .single();
+      .single<Program>();
 
     if (error) {
       if (error.code === 'PGRST116') {
@@ -61,21 +62,23 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     const adminClient = createAdminClient();
 
+    const updateData: Partial<Program> = {
+      title,
+      description,
+      price: parseFloat(price),
+      start_date,
+      end_date,
+      location,
+      images: images || [],
+      published: published ?? false,
+    };
+
     const { data, error } = await adminClient
       .from('programs')
-      .update({
-        title,
-        description,
-        price: parseFloat(price),
-        start_date,
-        end_date,
-        location,
-        images: images || [],
-        published: published ?? false,
-      })
+      .update(updateData as never)
       .eq('id', resolvedParams.id)
       .select()
-      .single();
+      .single<Program>();
 
     if (error) {
       if (error.code === 'PGRST116') {
@@ -107,10 +110,10 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     const { data, error } = await adminClient
       .from('programs')
-      .update(body)
+      .update(body as never)
       .eq('id', resolvedParams.id)
       .select()
-      .single();
+      .single<Program>();
 
     if (error) {
       if (error.code === 'PGRST116') {

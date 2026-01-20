@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase, createAdminClient } from '@/lib/supabase';
+import { Reservation } from '@/types/database';
 
 // POST - Create a new reservation (public)
 export async function POST(request: NextRequest) {
@@ -25,12 +26,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify program exists and is published
-    const { data: program, error: programError } = await supabase
+    const { data: programData, error: programError } = await supabase
       .from('programs')
       .select('id, title')
       .eq('id', program_id)
       .eq('published', true)
       .single();
+
+    const program = programData as { id: string; title: string } | null;
 
     if (programError || !program) {
       return NextResponse.json(
@@ -39,18 +42,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const insertData = {
+      program_id,
+      full_name: full_name.trim(),
+      phone: phone.trim(),
+      email: email.trim().toLowerCase(),
+      message: message?.trim() || null,
+    };
+
     // Create reservation using public client (RLS allows inserts)
     const { data, error } = await supabase
       .from('reservations')
-      .insert({
-        program_id,
-        full_name: full_name.trim(),
-        phone: phone.trim(),
-        email: email.trim().toLowerCase(),
-        message: message?.trim() || null,
-      })
+      .insert(insertData as never)
       .select()
-      .single();
+      .single<Reservation>();
 
     if (error) {
       throw error;

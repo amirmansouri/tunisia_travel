@@ -2,7 +2,7 @@ import { Mail, Phone, Calendar, MessageSquare } from 'lucide-react';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminHeader from '@/components/admin/AdminHeader';
 import { createAdminClient } from '@/lib/supabase';
-import { Reservation, ReservationWithProgram } from '@/types/database';
+import { Program, Reservation, ReservationWithProgram } from '@/types/database';
 import { formatDate } from '@/lib/utils';
 
 async function getReservations(): Promise<ReservationWithProgram[]> {
@@ -11,26 +11,30 @@ async function getReservations(): Promise<ReservationWithProgram[]> {
   const { data, error } = await supabase
     .from('reservations')
     .select('*')
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .returns<Reservation[]>();
 
   if (error || !data) {
     console.error('Error fetching reservations:', error);
     return [];
   }
 
-  const reservations = data as Reservation[];
+  const reservations = data;
 
   // Fetch associated programs
   const programIds = [...new Set(reservations.map((r) => r.program_id))];
-  const { data: programs } = await supabase
+  const { data: programsData } = await supabase
     .from('programs')
     .select('*')
-    .in('id', programIds);
+    .in('id', programIds)
+    .returns<Program[]>();
+
+  const programs = programsData || [];
 
   // Map programs to reservations
   return reservations.map((reservation) => ({
     ...reservation,
-    program: programs?.find((p) => p.id === reservation.program_id),
+    program: programs.find((p) => p.id === reservation.program_id),
   }));
 }
 
