@@ -1,7 +1,12 @@
+'use client';
+
 import Link from 'next/link';
 import { MapPin, Mail, Phone } from 'lucide-react';
+import { useLanguage } from '@/lib/i18n';
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-gray-900 text-gray-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -11,26 +16,24 @@ export default function Footer() {
             <Link href="/" className="flex items-center space-x-2 mb-4">
               <MapPin className="h-8 w-8 text-tunisia-red" />
               <span className="text-xl font-bold text-white">
-                Tunisia<span className="text-tunisia-red">Travel</span>
+                Arivo<span className="text-tunisia-red">Travel</span>
               </span>
             </Link>
             <p className="text-gray-400 mb-4 max-w-md">
-              Discover the magic of Tunisia with our expertly crafted travel
-              programs. From ancient ruins to Sahara adventures, we bring you
-              authentic experiences that last a lifetime.
+              {t.footer.description}
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Quick Links</h3>
+            <h3 className="text-white font-semibold mb-4">{t.footer.quickLinks}</h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   href="/"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  Home
+                  {t.footer.home}
                 </Link>
               </li>
               <li>
@@ -38,7 +41,7 @@ export default function Footer() {
                   href="/programs"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  All Programs
+                  {t.footer.allPrograms}
                 </Link>
               </li>
             </ul>
@@ -46,7 +49,7 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Contact Us</h3>
+            <h3 className="text-white font-semibold mb-4">{t.footer.contactUs}</h3>
             <ul className="space-y-3">
               <li className="flex items-center space-x-2">
                 <Mail className="h-5 w-5 text-tunisia-sand" />
@@ -70,11 +73,10 @@ export default function Footer() {
 
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} Tunisia Travel. All rights
-            reserved.
+            &copy; {new Date().getFullYear()} Arivo Travel. {t.footer.copyright}
           </p>
           <p className="text-gray-500 text-sm mt-2 md:mt-0">
-            Made with love in Tunisia
+            {t.footer.madeWith}
           </p>
         </div>
       </div>

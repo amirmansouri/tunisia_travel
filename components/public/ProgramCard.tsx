@@ -1,14 +1,18 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin, Calendar, Clock } from 'lucide-react';
 import { Program } from '@/types/database';
 import { formatPrice, formatDateRange, getDurationText } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n';
 
 interface ProgramCardProps {
   program: Program;
 }
 
 export default function ProgramCard({ program }: ProgramCardProps) {
+  const { t } = useLanguage();
   const duration = getDurationText(program.start_date, program.end_date);
   const dateRange = formatDateRange(program.start_date, program.end_date);
   const price = formatPrice(program.price);
@@ -60,7 +64,7 @@ export default function ProgramCard({ program }: ProgramCardProps) {
 
           <div className="mt-4 pt-4 border-t border-gray-100">
             <span className="text-tunisia-red font-semibold group-hover:underline">
-              View Details &rarr;
+              {t.programCard.viewDetails} &rarr;
             </span>
           </div>
         </div>

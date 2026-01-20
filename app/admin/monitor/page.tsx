@@ -23,7 +23,7 @@ export default function AdminMonitorPage() {
       plan: 'Hobby (Free)',
       usage: 'Unlimited deployments',
       expiry: 'No expiration',
-      url: 'https://vercel.com/amirmansouris-projects/tunisia-travel',
+      url: 'https://vercel.com/amirmansouris-projects/arivo-travel',
     },
     {
       name: 'Supabase',

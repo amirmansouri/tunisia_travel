@@ -2,17 +2,18 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import VisitorTracker from '@/components/VisitorTracker';
+import { LanguageProvider } from '@/lib/i18n';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Tunisia Travel - Discover the Jewel of North Africa',
+  title: 'Arivo Travel - Discover the Jewel of North Africa',
   description:
     'Explore Tunisia with our curated travel programs. From Sahara adventures to Mediterranean beaches, discover ancient ruins, vibrant medinas, and authentic Tunisian experiences.',
   keywords:
-    'Tunisia, travel, tourism, Sahara, Carthage, Tunis, Djerba, Hammamet, tours, vacation',
+    'Tunisia, travel, tourism, Sahara, Carthage, Tunis, Djerba, Hammamet, tours, vacation, Arivo',
   openGraph: {
-    title: 'Tunisia Travel - Discover the Jewel of North Africa',
+    title: 'Arivo Travel - Discover the Jewel of North Africa',
     description:
       'Explore Tunisia with our curated travel programs. Sahara adventures, Mediterranean beaches, and authentic experiences.',
     type: 'website',
@@ -26,10 +27,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <VisitorTracker />
-        {children}
+        <LanguageProvider>
+          <VisitorTracker />
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );
