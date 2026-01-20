@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Globe, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useLanguage, Language } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
@@ -36,8 +36,7 @@ export default function LanguageSwitcher() {
         className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:text-tunisia-red transition-colors rounded-lg hover:bg-gray-100"
         aria-label="Select language"
       >
-        <Globe className="h-4 w-4" />
-        <span className="text-sm font-medium hidden sm:inline">{currentLang.flag}</span>
+        <span className="text-xl">{currentLang.flag}</span>
         <ChevronDown className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')} />
       </button>
 
@@ -51,11 +50,11 @@ export default function LanguageSwitcher() {
                 setIsOpen(false);
               }}
               className={cn(
-                'w-full px-4 py-2 text-left text-sm flex items-center space-x-2 hover:bg-gray-100 transition-colors',
+                'w-full px-4 py-2 text-left text-sm flex items-center space-x-3 hover:bg-gray-100 transition-colors',
                 language === lang.code && 'bg-tunisia-red/10 text-tunisia-red'
               )}
             >
-              <span>{lang.flag}</span>
+              <span className="text-xl">{lang.flag}</span>
               <span>{lang.name}</span>
             </button>
           ))}
