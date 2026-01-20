@@ -50,18 +50,18 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex items-center space-x-2">
                 <Mail className="h-5 w-5 text-tunisia-sand" />
-                <span className="text-gray-400">info@tunisia-travel.com</span>
+                <a href="mailto:amirmansouri@engineer.com" className="text-gray-400 hover:text-white transition-colors">amirmansouri@engineer.com</a>
               </li>
               <li className="flex items-center space-x-2">
                 <Phone className="h-5 w-5 text-tunisia-sand" />
-                <span className="text-gray-400">+216 71 123 456</span>
+                <a href="https://wa.me/21627069149" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">+216 27 069 149</a>
               </li>
               <li className="flex items-start space-x-2">
                 <MapPin className="h-5 w-5 text-tunisia-sand mt-0.5" />
                 <span className="text-gray-400">
-                  Avenue Habib Bourguiba
+                  Foussana
                   <br />
-                  Tunis, Tunisia
+                  Kasserine, Tunisia
                 </span>
               </li>
             </ul>

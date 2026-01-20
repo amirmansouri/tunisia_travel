@@ -7,9 +7,11 @@ import {
   LayoutDashboard,
   Map,
   Users,
+  Globe,
   LogOut,
   Menu,
   X,
+  Monitor,
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -17,6 +19,8 @@ import { cn } from '@/lib/utils';
 const navigation = [
   { name: 'Programs', href: '/admin/programs', icon: Map },
   { name: 'Reservations', href: '/admin/reservations', icon: Users },
+  { name: 'Visitors', href: '/admin/visitors', icon: Globe },
+  { name: 'Monitor', href: '/admin/monitor', icon: Monitor },
 ];
 
 export default function AdminSidebar() {

@@ -1,6 +1,7 @@
 import { Mail, Phone, Calendar, MessageSquare } from 'lucide-react';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminHeader from '@/components/admin/AdminHeader';
+import ReservationImport from '@/components/admin/ReservationImport';
 import { createAdminClient } from '@/lib/supabase';
 import { Program, Reservation, ReservationWithProgram } from '@/types/database';
 import { formatDate } from '@/lib/utils';
@@ -39,6 +40,7 @@ async function getReservations(): Promise<ReservationWithProgram[]> {
 }
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function AdminReservationsPage() {
   const reservations = await getReservations();
@@ -55,6 +57,11 @@ export default async function AdminReservationsPage() {
           />
 
           <main className="p-4 sm:p-6 lg:p-8">
+            {/* Import/Export Section */}
+            <div className="mb-6">
+              <ReservationImport />
+            </div>
+
             {reservations.length === 0 ? (
               <div className="bg-white rounded-xl p-12 text-center">
                 <h3 className="text-lg font-semibold text-gray-700">

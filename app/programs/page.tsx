@@ -2,16 +2,27 @@ import { Suspense } from 'react';
 import Header from '@/components/public/Header';
 import Footer from '@/components/public/Footer';
 import ProgramCard from '@/components/public/ProgramCard';
-import { getMockPrograms } from '@/lib/mock-data';
+import { supabase } from '@/lib/supabase';
 import { Program } from '@/types/database';
 import { Loader2 } from 'lucide-react';
 
 async function getPrograms(): Promise<Program[]> {
-  // Use mock data for testing
-  return getMockPrograms();
+  const { data, error } = await supabase
+    .from('programs')
+    .select('*')
+    .eq('published', true)
+    .order('start_date', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching programs:', error);
+    return [];
+  }
+
+  return (data || []) as Program[];
 }
 
-export const revalidate = 60;
+export const revalidate = 0; // Always fetch fresh data
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Travel Programs | Tunisia Travel',

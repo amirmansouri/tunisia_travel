@@ -4,15 +4,27 @@ import { MapPin, Calendar, Star, Users } from 'lucide-react';
 import Header from '@/components/public/Header';
 import Footer from '@/components/public/Footer';
 import ProgramCard from '@/components/public/ProgramCard';
-import { getMockPrograms } from '@/lib/mock-data';
+import { supabase } from '@/lib/supabase';
 import { Program } from '@/types/database';
 
 async function getFeaturedPrograms(): Promise<Program[]> {
-  // Use mock data for testing
-  return getMockPrograms().slice(0, 6);
+  const { data, error } = await supabase
+    .from('programs')
+    .select('*')
+    .eq('published', true)
+    .order('created_at', { ascending: false })
+    .limit(6);
+
+  if (error) {
+    console.error('Error fetching programs:', error);
+    return [];
+  }
+
+  return (data || []) as Program[];
 }
 
-export const revalidate = 60;
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   const programs = await getFeaturedPrograms();

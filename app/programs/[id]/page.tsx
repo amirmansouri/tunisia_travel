@@ -5,7 +5,7 @@ import Header from '@/components/public/Header';
 import Footer from '@/components/public/Footer';
 import ImageGallery from '@/components/public/ImageGallery';
 import ReservationForm from '@/components/public/ReservationForm';
-import { getMockProgramById } from '@/lib/mock-data';
+import { supabase } from '@/lib/supabase';
 import { Program } from '@/types/database';
 import {
   formatPrice,
@@ -18,9 +18,18 @@ interface PageProps {
 }
 
 async function getProgram(id: string): Promise<Program | null> {
-  // Use mock data for testing
-  const program = getMockProgramById(id);
-  return program || null;
+  const { data, error } = await supabase
+    .from('programs')
+    .select('*')
+    .eq('id', id)
+    .eq('published', true)
+    .single();
+
+  if (error || !data) {
+    return null;
+  }
+
+  return data as Program;
 }
 
 export async function generateMetadata({ params }: PageProps) {
@@ -44,7 +53,8 @@ export async function generateMetadata({ params }: PageProps) {
   };
 }
 
-export const revalidate = 60;
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 export default async function ProgramDetailPage({ params }: PageProps) {
   const resolvedParams = await params;

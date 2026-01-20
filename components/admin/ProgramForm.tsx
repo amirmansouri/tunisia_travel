@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Loader2, Plus, X, Upload, ImageIcon } from 'lucide-react';
+import { Loader2, Plus, X } from 'lucide-react';
 import { Program } from '@/types/database';
 
 interface ProgramFormProps {
@@ -14,8 +14,8 @@ interface ProgramFormProps {
 export default function ProgramForm({ program, mode }: ProgramFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [uploadingImages, setUploadingImages] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState('');
 
   const [formData, setFormData] = useState({
     title: program?.title || '',
@@ -44,45 +44,6 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
     setError(null);
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    setUploadingImages(true);
-    setError(null);
-
-    try {
-      const uploadedUrls: string[] = [];
-
-      for (const file of Array.from(files)) {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const response = await fetch('/api/admin/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!response.ok) {
-          const data = await response.json();
-          throw new Error(data.error || 'Failed to upload image');
-        }
-
-        const { url } = await response.json();
-        uploadedUrls.push(url);
-      }
-
-      setFormData((prev) => ({
-        ...prev,
-        images: [...prev.images, ...uploadedUrls],
-      }));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to upload images');
-    } finally {
-      setUploadingImages(false);
-    }
-  };
-
   const removeImage = (index: number) => {
     setFormData((prev) => ({
       ...prev,
@@ -91,12 +52,12 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
   };
 
   const addImageUrl = () => {
-    const url = prompt('Enter image URL:');
-    if (url && url.trim()) {
+    if (imageUrl && imageUrl.trim()) {
       setFormData((prev) => ({
         ...prev,
-        images: [...prev.images, url.trim()],
+        images: [...prev.images, imageUrl.trim()],
       }));
+      setImageUrl('');
     }
   };
 
@@ -280,43 +241,29 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
           ))}
         </div>
 
-        {/* Upload Controls */}
-        <div className="flex flex-wrap gap-4">
-          <label className="btn-secondary cursor-pointer">
-            {uploadingImages ? (
-              <>
-                <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                Uploading...
-              </>
-            ) : (
-              <>
-                <Upload className="h-5 w-5 mr-2" />
-                Upload Images
-              </>
-            )}
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleImageUpload}
-              disabled={uploadingImages}
-              className="hidden"
-            />
-          </label>
-
+        {/* Add Image URL */}
+        <div className="flex gap-2">
+          <input
+            type="url"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            placeholder="Paste image URL here (e.g., https://example.com/image.jpg)"
+            className="input flex-1"
+          />
           <button
             type="button"
             onClick={addImageUrl}
-            className="btn-outline"
+            disabled={!imageUrl.trim()}
+            className="btn-primary"
           >
-            <ImageIcon className="h-5 w-5 mr-2" />
-            Add Image URL
+            <Plus className="h-5 w-5 mr-2" />
+            Add
           </button>
         </div>
 
         <p className="text-sm text-gray-500 mt-4">
-          The first image will be used as the cover image. Recommended size:
-          1200x800 pixels.
+          Paste image URLs from the web. The first image will be used as the cover.
+          You can use free image hosting like <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer" className="text-tunisia-blue hover:underline">Unsplash</a> or <a href="https://imgur.com" target="_blank" rel="noopener noreferrer" className="text-tunisia-blue hover:underline">Imgur</a>.
         </p>
       </div>
 

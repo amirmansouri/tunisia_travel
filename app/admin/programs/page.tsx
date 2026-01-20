@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminHeader from '@/components/admin/AdminHeader';
+import ProgramImport from '@/components/admin/ProgramImport';
 import { createAdminClient } from '@/lib/supabase';
 import { Program } from '@/types/database';
 import { formatPrice, formatDateRange } from '@/lib/utils';
@@ -26,6 +27,7 @@ async function getPrograms(): Promise<Program[]> {
 }
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function AdminProgramsPage() {
   const programs = await getPrograms();
@@ -48,6 +50,11 @@ export default async function AdminProgramsPage() {
           />
 
           <main className="p-4 sm:p-6 lg:p-8">
+            {/* Import/Export Section */}
+            <div className="mb-6">
+              <ProgramImport />
+            </div>
+
             {programs.length === 0 ? (
               <div className="bg-white rounded-xl p-12 text-center">
                 <h3 className="text-lg font-semibold text-gray-700">
