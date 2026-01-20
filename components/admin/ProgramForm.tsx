@@ -4,7 +4,16 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Loader2, Plus, X } from 'lucide-react';
-import { Program } from '@/types/database';
+import { Program, ProgramCategory } from '@/types/database';
+
+const categories: { value: ProgramCategory; label: string }[] = [
+  { value: 'adventure', label: 'Aventure' },
+  { value: 'beach', label: 'Plage' },
+  { value: 'cultural', label: 'Culturel' },
+  { value: 'desert', label: 'Désert' },
+  { value: 'city', label: 'Ville' },
+  { value: 'nature', label: 'Nature' },
+];
 
 interface ProgramFormProps {
   program?: Program;
@@ -26,6 +35,7 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
     location: program?.location || '',
     images: program?.images || [],
     published: program?.published || false,
+    category: program?.category || '' as ProgramCategory | '',
   });
 
   const handleChange = (
@@ -138,7 +148,7 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <label htmlFor="location" className="label">
                 Location *
@@ -171,6 +181,26 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
                 className="input"
                 placeholder="e.g., 1850"
               />
+            </div>
+
+            <div>
+              <label htmlFor="category" className="label">
+                Category
+              </label>
+              <select
+                id="category"
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                className="input"
+              >
+                <option value="">-- Select Category --</option>
+                {categories.map((cat) => (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
