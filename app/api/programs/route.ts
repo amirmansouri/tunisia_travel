@@ -1,0 +1,78 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { createAdminClient, supabase } from '@/lib/supabase';
+
+// GET - Fetch all published programs (public)
+export async function GET() {
+  try {
+    const { data, error } = await supabase
+      .from('programs')
+      .select('*')
+      .eq('published', true)
+      .order('start_date', { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error('Error fetching programs:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch programs' },
+      { status: 500 }
+    );
+  }
+}
+
+// POST - Create a new program (admin only)
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { title, description, price, start_date, end_date, location, images, published } = body;
+
+    // Validate required fields
+    if (!title || !description || !price || !start_date || !end_date || !location) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    // Validate date range
+    if (new Date(end_date) < new Date(start_date)) {
+      return NextResponse.json(
+        { error: 'End date must be after start date' },
+        { status: 400 }
+      );
+    }
+
+    const adminClient = createAdminClient();
+
+    const { data, error } = await adminClient
+      .from('programs')
+      .insert({
+        title,
+        description,
+        price: parseFloat(price),
+        start_date,
+        end_date,
+        location,
+        images: images || [],
+        published: published || false,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return NextResponse.json(data, { status: 201 });
+  } catch (error) {
+    console.error('Error creating program:', error);
+    return NextResponse.json(
+      { error: 'Failed to create program' },
+      { status: 500 }
+    );
+  }
+}
