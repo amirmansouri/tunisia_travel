@@ -2,21 +2,23 @@ import { Mail, Phone, Calendar, MessageSquare } from 'lucide-react';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminHeader from '@/components/admin/AdminHeader';
 import { createAdminClient } from '@/lib/supabase';
-import { ReservationWithProgram } from '@/types/database';
+import { Reservation, ReservationWithProgram } from '@/types/database';
 import { formatDate } from '@/lib/utils';
 
 async function getReservations(): Promise<ReservationWithProgram[]> {
   const supabase = createAdminClient();
 
-  const { data: reservations, error } = await supabase
+  const { data, error } = await supabase
     .from('reservations')
     .select('*')
     .order('created_at', { ascending: false });
 
-  if (error || !reservations) {
+  if (error || !data) {
     console.error('Error fetching reservations:', error);
     return [];
   }
+
+  const reservations = data as Reservation[];
 
   // Fetch associated programs
   const programIds = [...new Set(reservations.map((r) => r.program_id))];
