@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { MapPin, Calendar, Star, Users } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n';
 import ProgramCard from './ProgramCard';
+import Newsletter from './Newsletter';
 import { Program } from '@/types/database';
 
 interface HomeContentProps {
@@ -231,6 +232,9 @@ export default function HomeContent({ programs }: HomeContentProps) {
           </Link>
         </div>
       </section>
+
+      {/* Newsletter Section */}
+      <Newsletter />
     </main>
   );
 }

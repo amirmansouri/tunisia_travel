@@ -1,3 +1,7 @@
+export type ReservationStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
+
+export type ProgramCategory = 'adventure' | 'beach' | 'cultural' | 'desert' | 'city' | 'nature';
+
 export interface Program {
   id: string;
   title: string;
@@ -8,6 +12,7 @@ export interface Program {
   location: string;
   images: string[];
   published: boolean;
+  category?: ProgramCategory;
   created_at: string;
   updated_at?: string;
 }
@@ -19,11 +24,43 @@ export interface Reservation {
   phone: string;
   email: string;
   message: string | null;
+  status: ReservationStatus;
+  admin_notes?: string | null;
   created_at: string;
+  updated_at?: string;
 }
 
 export interface ReservationWithProgram extends Reservation {
   program?: Program;
+}
+
+export interface Review {
+  id: string;
+  program_id: string;
+  user_name: string;
+  user_email: string;
+  rating: number;
+  comment: string;
+  approved: boolean;
+  created_at: string;
+}
+
+export interface Newsletter {
+  id: string;
+  email: string;
+  subscribed: boolean;
+  created_at: string;
+}
+
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  subject: string;
+  message: string;
+  read: boolean;
+  created_at: string;
 }
 
 export interface CreateProgramInput {
@@ -35,6 +72,7 @@ export interface CreateProgramInput {
   location: string;
   images: string[];
   published: boolean;
+  category?: ProgramCategory;
 }
 
 export interface UpdateProgramInput extends Partial<CreateProgramInput> {
@@ -59,8 +97,23 @@ export type Database = {
       };
       reservations: {
         Row: Reservation;
-        Insert: Omit<Reservation, 'id' | 'created_at'>;
-        Update: Partial<Omit<Reservation, 'id' | 'created_at'>>;
+        Insert: Omit<Reservation, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<Reservation, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      reviews: {
+        Row: Review;
+        Insert: Omit<Review, 'id' | 'created_at'>;
+        Update: Partial<Omit<Review, 'id' | 'created_at'>>;
+      };
+      newsletter: {
+        Row: Newsletter;
+        Insert: Omit<Newsletter, 'id' | 'created_at'>;
+        Update: Partial<Omit<Newsletter, 'id' | 'created_at'>>;
+      };
+      contact_messages: {
+        Row: ContactMessage;
+        Insert: Omit<ContactMessage, 'id' | 'created_at'>;
+        Update: Partial<Omit<ContactMessage, 'id' | 'created_at'>>;
       };
     };
     Views: Record<string, never>;

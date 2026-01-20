@@ -12,13 +12,16 @@ import {
   Menu,
   X,
   Monitor,
+  CalendarDays,
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 const navigation = [
+  { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { name: 'Programs', href: '/admin/programs', icon: Map },
   { name: 'Reservations', href: '/admin/reservations', icon: Users },
+  { name: 'Calendar', href: '/admin/calendar', icon: CalendarDays },
   { name: 'Visitors', href: '/admin/visitors', icon: Globe },
   { name: 'Monitor', href: '/admin/monitor', icon: Monitor },
 ];

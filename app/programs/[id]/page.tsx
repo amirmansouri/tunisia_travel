@@ -5,6 +5,7 @@ import Header from '@/components/public/Header';
 import Footer from '@/components/public/Footer';
 import ImageGallery from '@/components/public/ImageGallery';
 import ReservationForm from '@/components/public/ReservationForm';
+import Reviews from '@/components/public/Reviews';
 import { supabase } from '@/lib/supabase';
 import { Program } from '@/types/database';
 import {
@@ -137,6 +138,11 @@ export default async function ProgramDetailPage({ params }: PageProps) {
                     </p>
                   ))}
                 </div>
+              </div>
+
+              {/* Reviews Section */}
+              <div className="bg-white rounded-xl p-6 shadow-sm">
+                <Reviews programId={program.id} />
               </div>
             </div>
 

@@ -117,6 +117,83 @@ export const translations = {
     common: {
       loading: 'Loading...',
     },
+    // Categories
+    categories: {
+      all: 'All',
+      adventure: 'Adventure',
+      beach: 'Beach',
+      cultural: 'Cultural',
+      desert: 'Desert',
+      city: 'City',
+      nature: 'Nature',
+    },
+    // Filters
+    filters: {
+      search: 'Search programs...',
+      category: 'Category',
+      priceRange: 'Price Range',
+      sortBy: 'Sort By',
+      priceAsc: 'Price: Low to High',
+      priceDesc: 'Price: High to Low',
+      dateAsc: 'Date: Nearest First',
+      dateDesc: 'Date: Latest First',
+      results: 'Showing {count} programs',
+      noResults: 'No programs match your filters',
+      clearFilters: 'Clear Filters',
+    },
+    // Contact
+    contact: {
+      title: 'Contact Us',
+      subtitle: 'Have questions? We\'d love to hear from you.',
+      name: 'Your Name',
+      email: 'Email Address',
+      phone: 'Phone (Optional)',
+      subject: 'Subject',
+      message: 'Your Message',
+      send: 'Send Message',
+      sending: 'Sending...',
+      success: 'Message sent successfully! We\'ll get back to you soon.',
+      error: 'Failed to send message. Please try again.',
+      info: 'Contact Information',
+      address: 'Tunis, Tunisia',
+      emailLabel: 'Email',
+      phoneLabel: 'Phone',
+    },
+    // Newsletter
+    newsletter: {
+      title: 'Stay Updated',
+      subtitle: 'Subscribe to receive the latest travel deals and news.',
+      placeholder: 'Enter your email',
+      subscribe: 'Subscribe',
+      subscribing: 'Subscribing...',
+      success: 'Thank you for subscribing!',
+      error: 'Failed to subscribe. Please try again.',
+    },
+    // WhatsApp
+    whatsapp: {
+      tooltip: 'Chat with us on WhatsApp',
+    },
+    // Favorites
+    favorites: {
+      add: 'Add to favorites',
+      remove: 'Remove from favorites',
+      title: 'Your Favorites',
+      empty: 'No favorites yet. Browse programs and add some!',
+    },
+    // Reviews
+    reviews: {
+      title: 'Reviews',
+      writeReview: 'Write a Review',
+      noReviews: 'No reviews yet. Be the first to review!',
+      yourName: 'Your Name',
+      yourEmail: 'Your Email',
+      rating: 'Rating',
+      comment: 'Your Review',
+      submit: 'Submit Review',
+      submitting: 'Submitting...',
+      success: 'Review submitted! It will appear after approval.',
+      averageRating: 'Average Rating',
+    },
   },
   fr: {
     // Header
@@ -236,6 +313,83 @@ export const translations = {
     common: {
       loading: 'Chargement...',
     },
+    // Categories
+    categories: {
+      all: 'Tout',
+      adventure: 'Aventure',
+      beach: 'Plage',
+      cultural: 'Culturel',
+      desert: 'Désert',
+      city: 'Ville',
+      nature: 'Nature',
+    },
+    // Filters
+    filters: {
+      search: 'Rechercher des programmes...',
+      category: 'Catégorie',
+      priceRange: 'Gamme de Prix',
+      sortBy: 'Trier Par',
+      priceAsc: 'Prix: Croissant',
+      priceDesc: 'Prix: Décroissant',
+      dateAsc: 'Date: Plus Proche',
+      dateDesc: 'Date: Plus Tard',
+      results: '{count} programmes affichés',
+      noResults: 'Aucun programme ne correspond à vos filtres',
+      clearFilters: 'Effacer les Filtres',
+    },
+    // Contact
+    contact: {
+      title: 'Contactez-nous',
+      subtitle: 'Vous avez des questions? Nous serions ravis de vous entendre.',
+      name: 'Votre Nom',
+      email: 'Adresse Email',
+      phone: 'Téléphone (Optionnel)',
+      subject: 'Sujet',
+      message: 'Votre Message',
+      send: 'Envoyer le Message',
+      sending: 'Envoi...',
+      success: 'Message envoyé avec succès! Nous vous répondrons bientôt.',
+      error: 'Échec de l\'envoi. Veuillez réessayer.',
+      info: 'Informations de Contact',
+      address: 'Tunis, Tunisie',
+      emailLabel: 'Email',
+      phoneLabel: 'Téléphone',
+    },
+    // Newsletter
+    newsletter: {
+      title: 'Restez Informé',
+      subtitle: 'Abonnez-vous pour recevoir les dernières offres et actualités.',
+      placeholder: 'Entrez votre email',
+      subscribe: 'S\'abonner',
+      subscribing: 'Abonnement...',
+      success: 'Merci pour votre abonnement!',
+      error: 'Échec de l\'abonnement. Veuillez réessayer.',
+    },
+    // WhatsApp
+    whatsapp: {
+      tooltip: 'Discutez avec nous sur WhatsApp',
+    },
+    // Favorites
+    favorites: {
+      add: 'Ajouter aux favoris',
+      remove: 'Retirer des favoris',
+      title: 'Vos Favoris',
+      empty: 'Pas encore de favoris. Parcourez les programmes et ajoutez-en!',
+    },
+    // Reviews
+    reviews: {
+      title: 'Avis',
+      writeReview: 'Écrire un Avis',
+      noReviews: 'Pas encore d\'avis. Soyez le premier à donner votre avis!',
+      yourName: 'Votre Nom',
+      yourEmail: 'Votre Email',
+      rating: 'Note',
+      comment: 'Votre Avis',
+      submit: 'Soumettre l\'Avis',
+      submitting: 'Envoi...',
+      success: 'Avis soumis! Il apparaîtra après approbation.',
+      averageRating: 'Note Moyenne',
+    },
   },
   ar: {
     // Header
@@ -354,6 +508,83 @@ export const translations = {
     // Common
     common: {
       loading: 'جاري التحميل...',
+    },
+    // Categories
+    categories: {
+      all: 'الكل',
+      adventure: 'مغامرة',
+      beach: 'شاطئ',
+      cultural: 'ثقافي',
+      desert: 'صحراء',
+      city: 'مدينة',
+      nature: 'طبيعة',
+    },
+    // Filters
+    filters: {
+      search: 'ابحث عن البرامج...',
+      category: 'الفئة',
+      priceRange: 'نطاق السعر',
+      sortBy: 'ترتيب حسب',
+      priceAsc: 'السعر: الأقل أولاً',
+      priceDesc: 'السعر: الأعلى أولاً',
+      dateAsc: 'التاريخ: الأقرب أولاً',
+      dateDesc: 'التاريخ: الأبعد أولاً',
+      results: 'عرض {count} برنامج',
+      noResults: 'لا توجد برامج تطابق فلاترك',
+      clearFilters: 'مسح الفلاتر',
+    },
+    // Contact
+    contact: {
+      title: 'اتصل بنا',
+      subtitle: 'هل لديك أسئلة؟ يسعدنا سماعك.',
+      name: 'اسمك',
+      email: 'البريد الإلكتروني',
+      phone: 'الهاتف (اختياري)',
+      subject: 'الموضوع',
+      message: 'رسالتك',
+      send: 'إرسال الرسالة',
+      sending: 'جاري الإرسال...',
+      success: 'تم إرسال الرسالة بنجاح! سنرد عليك قريباً.',
+      error: 'فشل الإرسال. حاول مرة أخرى.',
+      info: 'معلومات الاتصال',
+      address: 'تونس، تونس',
+      emailLabel: 'البريد الإلكتروني',
+      phoneLabel: 'الهاتف',
+    },
+    // Newsletter
+    newsletter: {
+      title: 'ابق على اطلاع',
+      subtitle: 'اشترك لتلقي أحدث العروض والأخبار.',
+      placeholder: 'أدخل بريدك الإلكتروني',
+      subscribe: 'اشترك',
+      subscribing: 'جاري الاشتراك...',
+      success: 'شكراً لاشتراكك!',
+      error: 'فشل الاشتراك. حاول مرة أخرى.',
+    },
+    // WhatsApp
+    whatsapp: {
+      tooltip: 'تحدث معنا على واتساب',
+    },
+    // Favorites
+    favorites: {
+      add: 'إضافة للمفضلة',
+      remove: 'إزالة من المفضلة',
+      title: 'مفضلاتك',
+      empty: 'لا توجد مفضلات بعد. تصفح البرامج وأضف بعضها!',
+    },
+    // Reviews
+    reviews: {
+      title: 'التقييمات',
+      writeReview: 'اكتب تقييماً',
+      noReviews: 'لا توجد تقييمات بعد. كن أول من يقيّم!',
+      yourName: 'اسمك',
+      yourEmail: 'بريدك الإلكتروني',
+      rating: 'التقييم',
+      comment: 'تقييمك',
+      submit: 'إرسال التقييم',
+      submitting: 'جاري الإرسال...',
+      success: 'تم إرسال التقييم! سيظهر بعد الموافقة.',
+      averageRating: 'متوسط التقييم',
     },
   },
 } as const;

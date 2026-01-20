@@ -153,6 +153,7 @@ export const mockReservations: Reservation[] = [
     phone: '+216 98 123 456',
     email: 'ahmed.bensalem@email.com',
     message: 'We are a group of 4 friends interested in this desert tour. Can you arrange a private guide?',
+    status: 'pending',
     created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -162,6 +163,7 @@ export const mockReservations: Reservation[] = [
     phone: '+33 6 12 34 56 78',
     email: 'marie.dupont@email.fr',
     message: 'Booking for 2 adults. Very excited about the beach holiday!',
+    status: 'confirmed',
     created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -171,6 +173,7 @@ export const mockReservations: Reservation[] = [
     phone: '+44 7700 900123',
     email: 'john.smith@email.co.uk',
     message: 'Looking forward to visiting Carthage!',
+    status: 'completed',
     created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
   },
 ];

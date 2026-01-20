@@ -44,6 +44,14 @@ export default function Footer() {
                   {t.footer.allPrograms}
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/contact"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  {t.footer.contactUs}
+                </Link>
+              </li>
             </ul>
           </div>
 

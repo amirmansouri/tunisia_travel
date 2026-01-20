@@ -6,6 +6,7 @@ import { MapPin, Calendar, Clock } from 'lucide-react';
 import { Program } from '@/types/database';
 import { formatPrice, formatDateRange, getDurationText } from '@/lib/utils';
 import { useLanguage } from '@/lib/i18n';
+import FavoriteButton from './FavoriteButton';
 
 interface ProgramCardProps {
   program: Program;
@@ -30,6 +31,7 @@ export default function ProgramCard({ program }: ProgramCardProps) {
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           <div className="gradient-overlay" />
+          <FavoriteButton programId={program.id} className="absolute top-4 right-4" />
           <div className="absolute bottom-4 left-4 right-4">
             <span className="inline-block bg-tunisia-red text-white text-sm font-semibold px-3 py-1 rounded-full">
               {price}

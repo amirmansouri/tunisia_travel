@@ -3,6 +3,8 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import VisitorTracker from '@/components/VisitorTracker';
 import { LanguageProvider } from '@/lib/i18n';
+import { FavoritesProvider } from '@/lib/favorites';
+import WhatsAppButton from '@/components/public/WhatsAppButton';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -30,8 +32,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <LanguageProvider>
-          <VisitorTracker />
-          {children}
+          <FavoritesProvider>
+            <VisitorTracker />
+            {children}
+            <WhatsAppButton phoneNumber="+21612345678" />
+          </FavoritesProvider>
         </LanguageProvider>
       </body>
     </html>
