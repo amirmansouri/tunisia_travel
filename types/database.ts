@@ -63,6 +63,15 @@ export interface ContactMessage {
   created_at: string;
 }
 
+export interface Visitor {
+  id: string;
+  ip_address: string;
+  user_agent: string;
+  country?: string | null;
+  city?: string | null;
+  created_at: string;
+}
+
 export interface CreateProgramInput {
   title: string;
   description: string;
@@ -114,6 +123,11 @@ export type Database = {
         Row: ContactMessage;
         Insert: Omit<ContactMessage, 'id' | 'created_at'>;
         Update: Partial<Omit<ContactMessage, 'id' | 'created_at'>>;
+      };
+      visitors: {
+        Row: Visitor;
+        Insert: Omit<Visitor, 'id' | 'created_at'>;
+        Update: Partial<Omit<Visitor, 'id' | 'created_at'>>;
       };
     };
     Views: Record<string, never>;

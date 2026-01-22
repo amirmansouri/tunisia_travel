@@ -6,6 +6,7 @@ import Footer from '@/components/public/Footer';
 import ImageGallery from '@/components/public/ImageGallery';
 import ReservationForm from '@/components/public/ReservationForm';
 import Reviews from '@/components/public/Reviews';
+import AdBanner from '@/components/AdBanner';
 import { supabase } from '@/lib/supabase';
 import { Program } from '@/types/database';
 import {
@@ -138,6 +139,11 @@ export default async function ProgramDetailPage({ params }: PageProps) {
                     </p>
                   ))}
                 </div>
+              </div>
+
+              {/* Ad Banner */}
+              <div className="my-4">
+                <AdBanner adSlot="1525071635" adFormat="auto" />
               </div>
 
               {/* Reviews Section */}

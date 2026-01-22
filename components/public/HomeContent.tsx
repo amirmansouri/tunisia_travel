@@ -6,6 +6,7 @@ import { MapPin, Calendar, Star, Users } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n';
 import ProgramCard from './ProgramCard';
 import Newsletter from './Newsletter';
+import AdBanner from '@/components/AdBanner';
 import { Program } from '@/types/database';
 
 interface HomeContentProps {
@@ -90,6 +91,13 @@ export default function HomeContent({ programs }: HomeContentProps) {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Ad Banner */}
+      <section className="py-4 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AdBanner adSlot="1525071635" adFormat="auto" />
         </div>
       </section>
 

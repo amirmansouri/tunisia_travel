@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useLanguage } from '@/lib/i18n';
 import ProgramCard from './ProgramCard';
+import AdBanner from '@/components/AdBanner';
 import { Program, ProgramCategory } from '@/types/database';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -207,11 +208,29 @@ export default function ProgramsContent({ programs }: ProgramsContentProps) {
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredPrograms.map((program) => (
-                <ProgramCard key={program.id} program={program} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredPrograms.slice(0, 3).map((program) => (
+                  <ProgramCard key={program.id} program={program} />
+                ))}
+              </div>
+
+              {/* Ad Banner after first 3 programs */}
+              {filteredPrograms.length > 3 && (
+                <div className="my-8">
+                  <AdBanner adSlot="1525071635" adFormat="auto" />
+                </div>
+              )}
+
+              {/* Remaining programs */}
+              {filteredPrograms.length > 3 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {filteredPrograms.slice(3).map((program) => (
+                    <ProgramCard key={program.id} program={program} />
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
