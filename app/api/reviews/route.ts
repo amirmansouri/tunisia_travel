@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase, createAdminClient } from '@/lib/supabase';
+import { createAdminClient } from '@/lib/supabase';
 
 export async function GET(request: Request) {
   try {
@@ -13,7 +13,8 @@ export async function GET(request: Request) {
       );
     }
 
-    const { data, error } = await supabase
+    const adminClient = createAdminClient();
+    const { data, error } = await adminClient
       .from('reviews')
       .select('*')
       .eq('program_id', programId)
@@ -43,8 +44,11 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { program_id, user_name, user_email, rating, comment } = body;
 
+    console.log('Review submission received:', { program_id, user_name, user_email, rating });
+
     // Validation
     if (!program_id || !user_name || !user_email || !rating || !comment) {
+      console.log('Validation failed: missing fields');
       return NextResponse.json(
         { error: 'All fields are required' },
         { status: 400 }
@@ -69,23 +73,32 @@ export async function POST(request: Request) {
     }
 
     const adminClient = createAdminClient();
-    const { error } = await adminClient.from('reviews').insert({
+
+    const insertData = {
       program_id,
       user_name,
       user_email,
-      rating,
+      rating: Number(rating),
       comment,
-      approved: false, // Reviews need admin approval
-    } as never);
+      approved: false,
+    };
+
+    console.log('Inserting review:', insertData);
+
+    const { data, error } = await adminClient
+      .from('reviews')
+      .insert(insertData as never)
+      .select();
 
     if (error) {
-      console.error('Error saving review:', error);
+      console.error('Error saving review:', error.message, error.details, error.hint);
       return NextResponse.json(
-        { error: 'Failed to save review' },
+        { error: `Failed to save review: ${error.message}` },
         { status: 500 }
       );
     }
 
+    console.log('Review saved successfully:', data);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Review submission error:', error);
