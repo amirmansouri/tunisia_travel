@@ -30,7 +30,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { title, description, price, start_date, end_date, location, images, published } = body;
+    const { title, description, price, start_date, end_date, location, images, published, category } = body;
 
     // Validate required fields
     if (!title || !description || !price || !start_date || !end_date || !location) {
@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
       location,
       images: images || [],
       published: published || false,
+      category: category || null,
     };
 
     const { data, error } = await adminClient

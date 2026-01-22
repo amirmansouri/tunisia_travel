@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createAdminClient } from '@/lib/supabase';
 
 interface NewsletterRecord {
   id: string;
@@ -28,8 +28,10 @@ export async function POST(request: Request) {
       );
     }
 
+    const adminClient = createAdminClient();
+
     // Check if already subscribed
-    const { data } = await supabase
+    const { data } = await adminClient
       .from('newsletter')
       .select('id, subscribed')
       .eq('email', email)
@@ -42,7 +44,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ success: true, message: 'Already subscribed' });
       } else {
         // Resubscribe
-        await supabase
+        await adminClient
           .from('newsletter')
           .update({ subscribed: true } as never)
           .eq('id', existing.id);
@@ -50,7 +52,7 @@ export async function POST(request: Request) {
       }
     }
 
-    const { error } = await supabase.from('newsletter').insert({
+    const { error } = await adminClient.from('newsletter').insert({
       email,
       subscribed: true,
     } as never);

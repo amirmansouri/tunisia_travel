@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabase, createAdminClient } from '@/lib/supabase';
 
 export async function GET(request: Request) {
   try {
@@ -68,7 +68,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const { error } = await supabase.from('reviews').insert({
+    const adminClient = createAdminClient();
+    const { error } = await adminClient.from('reviews').insert({
       program_id,
       user_name,
       user_email,

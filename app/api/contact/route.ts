@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createAdminClient } from '@/lib/supabase';
 
 export async function POST(request: Request) {
   try {
@@ -23,7 +23,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const { error } = await supabase.from('contact_messages').insert({
+    const adminClient = createAdminClient();
+    const { error } = await adminClient.from('contact_messages').insert({
       name,
       email,
       phone: phone || null,
