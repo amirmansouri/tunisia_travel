@@ -15,17 +15,26 @@ export async function POST(request: NextRequest) {
     const country = request.headers.get('x-vercel-ip-country') || null;
     const city = request.headers.get('x-vercel-ip-city') || null;
 
+    console.log('Tracking visitor:', { ip_address, country, city });
+
     const adminClient = createAdminClient();
 
-    await adminClient
+    const { data, error } = await adminClient
       .from('visitors')
       .insert({
         ip_address,
         user_agent,
         country,
         city,
-      } as never);
+      } as never)
+      .select();
 
+    if (error) {
+      console.error('Error inserting visitor:', error.message, error.details);
+      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    }
+
+    console.log('Visitor tracked successfully:', data);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error logging visitor:', error);
@@ -45,10 +54,11 @@ export async function GET() {
       .limit(500);
 
     if (error) {
+      console.error('Error fetching visitors:', error);
       throw error;
     }
 
-    return NextResponse.json(data);
+    return NextResponse.json(data || []);
   } catch (error) {
     console.error('Error fetching visitors:', error);
     return NextResponse.json(
