@@ -40,12 +40,12 @@ export async function generateMetadata({ params }: PageProps) {
 
   if (!program) {
     return {
-      title: 'Program Not Found | Tunisia Travel',
+      title: 'Program Not Found | Yalla Habibi',
     };
   }
 
   return {
-    title: `${program.title} | Tunisia Travel`,
+    title: `${program.title} | Yalla Habibi`,
     description: program.description.slice(0, 160),
     openGraph: {
       title: program.title,

@@ -23,7 +23,7 @@ export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'Travel Programs | Arivo Travel',
+  title: 'Travel Programs | Yalla Habibi',
   description:
     'Browse our curated selection of Tunisia travel programs. From Sahara adventures to coastal escapes, find your perfect trip.',
 };

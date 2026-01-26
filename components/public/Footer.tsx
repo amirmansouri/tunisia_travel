@@ -16,7 +16,7 @@ export default function Footer() {
             <Link href="/" className="flex items-center space-x-2 mb-4">
               <MapPin className="h-8 w-8 text-tunisia-red" />
               <span className="text-xl font-bold text-white">
-                Arivo<span className="text-tunisia-red">Travel</span>
+                Yalla<span className="text-tunisia-red">Habibi</span>
               </span>
             </Link>
             <p className="text-gray-400 mb-4 max-w-md">
@@ -81,7 +81,7 @@ export default function Footer() {
 
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} Arivo Travel. {t.footer.copyright}
+            &copy; {new Date().getFullYear()} Yalla Habibi. {t.footer.copyright}
           </p>
           <p className="text-gray-500 text-sm mt-2 md:mt-0">
             {t.footer.madeWith}

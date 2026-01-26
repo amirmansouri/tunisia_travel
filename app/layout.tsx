@@ -9,13 +9,13 @@ import WhatsAppButton from '@/components/public/WhatsAppButton';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Arivo Travel - Discover the Jewel of North Africa',
+  title: 'Yalla Habibi - Discover the Jewel of North Africa',
   description:
     'Explore Tunisia with our curated travel programs. From Sahara adventures to Mediterranean beaches, discover ancient ruins, vibrant medinas, and authentic Tunisian experiences.',
   keywords:
-    'Tunisia, travel, tourism, Sahara, Carthage, Tunis, Djerba, Hammamet, tours, vacation, Arivo',
+    'Tunisia, travel, tourism, Sahara, Carthage, Tunis, Djerba, Hammamet, tours, vacation, Yalla Habibi',
   openGraph: {
-    title: 'Arivo Travel - Discover the Jewel of North Africa',
+    title: 'Yalla Habibi - Discover the Jewel of North Africa',
     description:
       'Explore Tunisia with our curated travel programs. Sahara adventures, Mediterranean beaches, and authentic experiences.',
     type: 'website',

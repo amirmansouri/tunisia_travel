@@ -18,7 +18,7 @@ export default function Header() {
           <Link href="/" className="flex items-center space-x-2">
             <MapPin className="h-8 w-8 text-tunisia-red" />
             <span className="text-xl font-bold text-gray-900">
-              Arivo<span className="text-tunisia-red">Travel</span>
+              Yalla<span className="text-tunisia-red">Habibi</span>
             </span>
           </Link>
 

@@ -53,7 +53,7 @@ export default function AdminLoginPage() {
             <div className="flex items-center justify-center space-x-2 mb-4">
               <MapPin className="h-10 w-10 text-tunisia-red" />
               <span className="text-2xl font-bold text-gray-900">
-                Tunisia<span className="text-tunisia-red">Travel</span>
+                Yalla<span className="text-tunisia-red">Habibi</span>
               </span>
             </div>
             <h1 className="text-xl font-semibold text-gray-700">Admin Panel</h1>
@@ -111,7 +111,7 @@ export default function AdminLoginPage() {
         </div>
 
         <p className="text-center text-gray-500 text-sm mt-6">
-          &copy; {new Date().getFullYear()} Tunisia Travel. Admin Access Only.
+          &copy; {new Date().getFullYear()} Yalla Habibi. Admin Access Only.
         </p>
       </div>
     </div>

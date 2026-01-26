@@ -4,8 +4,8 @@ import ContactForm from '@/components/public/ContactForm';
 import { MapPin, Mail, Phone } from 'lucide-react';
 
 export const metadata = {
-  title: 'Contact Us | Arivo Travel',
-  description: 'Get in touch with Arivo Travel. We\'re here to help with your Tunisia travel plans.',
+  title: 'Contact Us | Yalla Habibi',
+  description: 'Get in touch with Yalla Habibi. We\'re here to help with your Tunisia travel plans.',
 };
 
 export default function ContactPage() {

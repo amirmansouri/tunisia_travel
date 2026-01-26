@@ -47,7 +47,7 @@ export default function AdminSidebar() {
       <div className="flex items-center space-x-2 mb-8 px-2">
         <MapPin className="h-8 w-8 text-tunisia-red" />
         <span className="text-xl font-bold text-gray-900">
-          Arivo<span className="text-tunisia-red">Travel</span>
+          Yalla<span className="text-tunisia-red">Habibi</span>
         </span>
       </div>
 

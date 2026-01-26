@@ -274,7 +274,7 @@ export default function ReservationCard({ reservation }: ReservationCardProps) {
       {/* Actions */}
       <div className="mt-6 pt-4 border-t flex flex-wrap gap-3">
         <a
-          href={`mailto:${reservation.email}?subject=Re: Your Arivo Travel Reservation - ${reservation.program?.title || 'Inquiry'}`}
+          href={`mailto:${reservation.email}?subject=Re: Your Yalla Habibi Reservation - ${reservation.program?.title || 'Inquiry'}`}
           className="btn-primary text-sm"
         >
           <Mail className="h-4 w-4 mr-2" />

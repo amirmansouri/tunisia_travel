@@ -8,7 +8,7 @@ interface PageProps {
 }
 
 export const metadata = {
-  title: 'Reservation Confirmed | Tunisia Travel',
+  title: 'Reservation Confirmed | Yalla Habibi',
   description: 'Your reservation request has been successfully submitted.',
 };
 
