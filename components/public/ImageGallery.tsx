@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import SmartImage from '@/components/SmartImage';
 
 interface ImageGalleryProps {
   images: string[];
@@ -38,7 +38,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
           className="relative aspect-video rounded-xl overflow-hidden cursor-pointer group"
           onClick={() => setLightboxOpen(true)}
         >
-          <Image
+          <SmartImage
             src={images[currentIndex]}
             alt={`${title} - Image ${currentIndex + 1}`}
             fill
@@ -93,7 +93,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
                     : 'opacity-70 hover:opacity-100'
                 } transition-all`}
               >
-                <Image
+                <SmartImage
                   src={image}
                   alt={`${title} - Thumbnail ${index + 1}`}
                   fill
@@ -135,7 +135,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
             className="relative max-w-5xl max-h-[80vh] w-full h-full m-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <Image
+            <SmartImage
               src={images[currentIndex]}
               alt={`${title} - Image ${currentIndex + 1}`}
               fill

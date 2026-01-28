@@ -4,6 +4,7 @@ export const translations = {
     nav: {
       home: 'Home',
       programs: 'Programs',
+      gallery: 'Gallery',
       bookNow: 'Book Now',
     },
     // Hero Section
@@ -200,6 +201,7 @@ export const translations = {
     nav: {
       home: 'Accueil',
       programs: 'Programmes',
+      gallery: 'Galerie',
       bookNow: 'Réserver',
     },
     // Hero Section
@@ -396,6 +398,7 @@ export const translations = {
     nav: {
       home: 'الرئيسية',
       programs: 'البرامج',
+      gallery: 'المعرض',
       bookNow: 'احجز الآن',
     },
     // Hero Section

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
+import SmartImage from '@/components/SmartImage';
 
 interface DayImageGalleryProps {
   images: string[];
@@ -45,7 +45,7 @@ export default function DayImageGallery({ images, dayNumber, dayTitle }: DayImag
           className="relative aspect-[16/10] rounded-lg overflow-hidden cursor-pointer group"
           onClick={openLightbox}
         >
-          <Image
+          <SmartImage
             src={images[currentIndex]}
             alt={`Day ${dayNumber} - ${dayTitle} image ${currentIndex + 1}`}
             fill
@@ -100,7 +100,7 @@ export default function DayImageGallery({ images, dayNumber, dayTitle }: DayImag
                   : 'border-transparent hover:border-gray-300'
               }`}
             >
-              <Image
+              <SmartImage
                 src={img}
                 alt={`Thumbnail ${index + 1}`}
                 fill
@@ -134,7 +134,7 @@ export default function DayImageGallery({ images, dayNumber, dayTitle }: DayImag
 
           {/* Main Lightbox Image */}
           <div className="relative w-full h-full max-w-5xl max-h-[85vh] mx-4" onClick={(e) => e.stopPropagation()}>
-            <Image
+            <SmartImage
               src={images[currentIndex]}
               alt={`Day ${dayNumber} - ${dayTitle} image ${currentIndex + 1}`}
               fill
@@ -179,7 +179,7 @@ export default function DayImageGallery({ images, dayNumber, dayTitle }: DayImag
                     : 'border-transparent opacity-60 hover:opacity-100'
                 }`}
               >
-                <Image
+                <SmartImage
                   src={img}
                   alt={`Thumbnail ${index + 1}`}
                   fill

@@ -28,6 +28,7 @@ async function getProgram(id: string): Promise<Program | null> {
 }
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function EditProgramPage({ params }: PageProps) {
   const resolvedParams = await params;

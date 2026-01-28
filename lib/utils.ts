@@ -68,3 +68,64 @@ export function truncate(text: string, length: number): string {
   if (text.length <= length) return text;
   return text.slice(0, length).trim() + '...';
 }
+
+/**
+ * Extracts Google Drive file ID from various URL formats
+ */
+export function extractGoogleDriveId(url: string): string | null {
+  if (!url) return null;
+
+  // Google Drive file/d/ format
+  const fileMatch = url.match(/drive\.google\.com\/file\/d\/([^/?]+)/);
+  if (fileMatch) return fileMatch[1];
+
+  // Google Drive open?id= format
+  const openMatch = url.match(/drive\.google\.com\/open\?id=([^&]+)/);
+  if (openMatch) return openMatch[1];
+
+  // Google Drive uc?id= format
+  const ucMatch = url.match(/drive\.google\.com\/uc\?.*id=([^&]+)/);
+  if (ucMatch) return ucMatch[1];
+
+  // Google Drive thumbnail format
+  const thumbMatch = url.match(/drive\.google\.com\/thumbnail\?.*id=([^&]+)/);
+  if (thumbMatch) return thumbMatch[1];
+
+  // Check if it's just a file ID
+  if (/^[a-zA-Z0-9_-]{25,50}$/.test(url)) {
+    return url;
+  }
+
+  return null;
+}
+
+/**
+ * Converts any image URL to a direct URL.
+ * Handles Google Drive URLs in various formats:
+ * - https://drive.google.com/file/d/FILE_ID/view
+ * - https://drive.google.com/open?id=FILE_ID
+ * - https://drive.google.com/uc?id=FILE_ID
+ * - Just the FILE_ID (if it looks like a Google Drive ID)
+ *
+ * Uses the thumbnail endpoint which is more reliable for displaying images.
+ * Returns the original URL for non-Google Drive images.
+ */
+export function getImageUrl(url: string): string {
+  if (!url) return '';
+
+  const fileId = extractGoogleDriveId(url);
+  if (fileId) {
+    // Use thumbnail endpoint with large size - more reliable than uc?export=view
+    return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+  }
+
+  // Return original URL for other image sources
+  return url;
+}
+
+/**
+ * Check if a URL is from Google Drive
+ */
+export function isGoogleDriveUrl(url: string): boolean {
+  return extractGoogleDriveId(url) !== null;
+}

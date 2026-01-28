@@ -1,12 +1,12 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin, Calendar, Clock } from 'lucide-react';
 import { Program } from '@/types/database';
 import { formatPrice, formatDateRange, getDurationText } from '@/lib/utils';
 import { useLanguage } from '@/lib/i18n';
 import FavoriteButton from './FavoriteButton';
+import SmartImage from '@/components/SmartImage';
 
 interface ProgramCardProps {
   program: Program;
@@ -23,7 +23,7 @@ export default function ProgramCard({ program }: ProgramCardProps) {
       <article className="card group cursor-pointer h-full flex flex-col">
         {/* Image */}
         <div className="relative h-56 overflow-hidden">
-          <Image
+          <SmartImage
             src={program.images[0] || '/images/placeholder.jpg'}
             alt={program.title}
             fill

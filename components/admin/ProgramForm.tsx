@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { Loader2, Plus, X, MapPin, GripVertical, Trash2, ImageIcon } from 'lucide-react';
+import { Loader2, Plus, X, MapPin, Trash2, ImageIcon, FolderOpen } from 'lucide-react';
 import { Program, ProgramCategory, ItineraryDay } from '@/types/database';
+import SmartImage from '@/components/SmartImage';
+import GoogleDriveModal from '@/components/admin/GoogleDriveModal';
 
 const categories: { value: ProgramCategory; label: string }[] = [
   { value: 'adventure', label: 'Aventure' },
@@ -25,6 +26,10 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState('');
+
+  // Google Drive Modal state
+  const [driveModalOpen, setDriveModalOpen] = useState(false);
+  const [dayDriveModalIndex, setDayDriveModalIndex] = useState<number | null>(null);
 
   const [formData, setFormData] = useState({
     title: program?.title || '',
@@ -73,6 +78,13 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
       }));
       setImageUrl('');
     }
+  };
+
+  const addImagesFromDrive = (urls: string[]) => {
+    setFormData((prev) => ({
+      ...prev,
+      images: [...prev.images, ...urls],
+    }));
   };
 
   // Itinerary functions
@@ -157,6 +169,17 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
       itinerary: prev.itinerary.map((day, i) =>
         i === dayIndex
           ? { ...day, images: day.images?.filter((_, ii) => ii !== imageIndex) }
+          : day
+      ),
+    }));
+  };
+
+  const addDayImagesFromDrive = (dayIndex: number, urls: string[]) => {
+    setFormData((prev) => ({
+      ...prev,
+      itinerary: prev.itinerary.map((day, i) =>
+        i === dayIndex
+          ? { ...day, images: [...(day.images || []), ...urls] }
           : day
       ),
     }));
@@ -338,7 +361,7 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {formData.images.map((image, index) => (
             <div key={index} className="relative group aspect-video">
-              <Image
+              <SmartImage
                 src={image}
                 alt={`Image ${index + 1}`}
                 fill
@@ -362,12 +385,12 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
         </div>
 
         {/* Add Image URL */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 mb-4">
           <input
             type="url"
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
-            placeholder="Paste image URL here (e.g., https://example.com/image.jpg)"
+            placeholder="Paste Google Drive link or image URL"
             className="input flex-1"
           />
           <button
@@ -381,9 +404,24 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
           </button>
         </div>
 
+        {/* Google Drive Button */}
+        <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <button
+            type="button"
+            onClick={() => setDriveModalOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            <FolderOpen className="h-5 w-5" />
+            Select from Google Drive
+          </button>
+          <span className="text-sm text-gray-500">
+            Paste multiple Google Drive links at once
+          </span>
+        </div>
+
         <p className="text-sm text-gray-500 mt-4">
-          Paste image URLs from the web. The first image will be used as the cover.
-          You can use free image hosting like <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer" className="text-tunisia-blue hover:underline">Unsplash</a> or <a href="https://imgur.com" target="_blank" rel="noopener noreferrer" className="text-tunisia-blue hover:underline">Imgur</a>.
+          The first image will be used as the cover. You can paste Google Drive links like:
+          <code className="mx-1 px-2 py-0.5 bg-gray-100 rounded text-xs">https://drive.google.com/file/d/FILE_ID/view</code>
         </p>
       </div>
 
@@ -527,13 +565,16 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
                       <label className="label text-sm mb-2">
                         <ImageIcon className="h-4 w-4 inline mr-1" />
                         Day Images
+                        <span className="ml-2 text-xs text-gray-500">
+                          ({day.images?.length || 0} image{(day.images?.length || 0) !== 1 ? 's' : ''})
+                        </span>
                       </label>
                       {/* Image thumbnails */}
                       {day.images && day.images.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-2">
                           {day.images.map((img, imgIndex) => (
                             <div key={imgIndex} className="relative group w-20 h-14">
-                              <Image
+                              <SmartImage
                                 src={img}
                                 alt={`Day ${day.day} image ${imgIndex + 1}`}
                                 fill
@@ -552,14 +593,14 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
                         </div>
                       )}
                       {/* Add image input */}
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 mb-2">
                         <input
                           type="url"
                           value={dayImageUrls[index] || ''}
                           onChange={(e) =>
                             setDayImageUrls((prev) => ({ ...prev, [index]: e.target.value }))
                           }
-                          placeholder="Paste image URL"
+                          placeholder="Paste Google Drive or image URL"
                           className="input flex-1 text-sm py-1"
                         />
                         <button
@@ -571,6 +612,15 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
                           <Plus className="h-4 w-4" />
                         </button>
                       </div>
+                      {/* Google Drive Button for Day */}
+                      <button
+                        type="button"
+                        onClick={() => setDayDriveModalIndex(index)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-gray-300 rounded text-gray-700 hover:bg-gray-50 transition-colors text-sm"
+                      >
+                        <FolderOpen className="h-4 w-4" />
+                        Drive
+                      </button>
                     </div>
                   </div>
 
@@ -650,6 +700,25 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
           )}
         </button>
       </div>
+
+      {/* Google Drive Modal for Program Images */}
+      <GoogleDriveModal
+        isOpen={driveModalOpen}
+        onClose={() => setDriveModalOpen(false)}
+        onAddImages={addImagesFromDrive}
+      />
+
+      {/* Google Drive Modal for Day Images */}
+      <GoogleDriveModal
+        isOpen={dayDriveModalIndex !== null}
+        onClose={() => setDayDriveModalIndex(null)}
+        onAddImages={(urls) => {
+          if (dayDriveModalIndex !== null) {
+            addDayImagesFromDrive(dayDriveModalIndex, urls);
+          }
+          setDayDriveModalIndex(null);
+        }}
+      />
     </form>
   );
 }
