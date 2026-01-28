@@ -48,7 +48,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
           />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
 
-          {/* Navigation Arrows */}
+          {/* Navigation Arrows - always visible on mobile */}
           {images.length > 1 && (
             <>
               <button
@@ -56,20 +56,20 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
                   e.stopPropagation();
                   goToPrevious();
                 }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-1.5 sm:p-2 rounded-full shadow-lg transition-all sm:opacity-0 sm:group-hover:opacity-100"
                 aria-label="Previous image"
               >
-                <ChevronLeft className="h-6 w-6 text-gray-800" />
+                <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 text-gray-800" />
               </button>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   goToNext();
                 }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-1.5 sm:p-2 rounded-full shadow-lg transition-all sm:opacity-0 sm:group-hover:opacity-100"
                 aria-label="Next image"
               >
-                <ChevronRight className="h-6 w-6 text-gray-800" />
+                <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 text-gray-800" />
               </button>
             </>
           )}

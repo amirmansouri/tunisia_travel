@@ -115,6 +115,47 @@
   scroll-snap-align: start;
 }
 
+/* Mobile touch improvements */
+@media (max-width: 768px) {
+  /* Larger touch targets */
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Better text readability */
+  body {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Prevent horizontal scroll */
+  html, body {
+    overflow-x: hidden;
+  }
+
+  /* Fix iOS form input zoom */
+  input, select, textarea {
+    font-size: 16px;
+  }
+}
+
+/* Smooth scrolling for mobile */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar on mobile for cleaner look */
+@media (max-width: 768px) {
+  .gallery-slider::-webkit-scrollbar {
+    display: none;
+  }
+  .gallery-slider {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
 /* RTL Support */
 [dir="rtl"] {
   text-align: right;

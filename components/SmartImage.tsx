@@ -93,7 +93,6 @@ export default function SmartImage({ src, alt, className, fill, style, ...props 
           className={className}
           style={imgStyle}
           loading="lazy"
-          referrerPolicy="no-referrer"
           onLoad={() => setIsLoading(false)}
           onError={() => {
             setIsLoading(false);

@@ -115,8 +115,8 @@ export function getImageUrl(url: string): string {
 
   const fileId = extractGoogleDriveId(url);
   if (fileId) {
-    // Use thumbnail format with large size - most reliable for embedding
-    return `https://drive.google.com/thumbnail?id=${fileId}&sz=w2000`;
+    // Use our image proxy to serve Google Drive images (works on mobile)
+    return `/api/image-proxy?id=${fileId}`;
   }
 
   // Return original URL for other image sources
