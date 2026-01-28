@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image, { ImageProps } from 'next/image';
-import { getImageUrl, isGoogleDriveUrl } from '@/lib/utils';
+import { getImageUrl, isGoogleDriveUrl, extractGoogleDriveId } from '@/lib/utils';
 import { ImageIcon } from 'lucide-react';
 
 interface SmartImageProps extends Omit<ImageProps, 'src'> {
@@ -11,18 +11,19 @@ interface SmartImageProps extends Omit<ImageProps, 'src'> {
 
 /**
  * SmartImage - Automatically handles Google Drive images
- *
- * Usage:
- * - Pass any image URL or Google Drive file ID
- * - Automatically converts Google Drive URLs to direct image URLs
- * - Uses regular img tag for Google Drive images (more reliable)
- * - Uses Next.js Image for other images (optimization)
+ * Tries direct URL first, falls back to proxy if it fails (for mobile)
  */
 export default function SmartImage({ src, alt, className, fill, style, ...props }: SmartImageProps) {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const imageUrl = getImageUrl(src);
+  const [useProxy, setUseProxy] = useState(false);
   const isGoogleDrive = isGoogleDriveUrl(src);
+  const fileId = extractGoogleDriveId(src);
+
+  // Get the appropriate URL based on whether we need proxy
+  const imageUrl = isGoogleDrive && fileId
+    ? (useProxy ? `/api/image-proxy?id=${fileId}` : `https://drive.google.com/thumbnail?id=${fileId}&sz=w2000`)
+    : getImageUrl(src);
 
   // Show placeholder if error or no src
   if (hasError || !src) {
@@ -95,8 +96,14 @@ export default function SmartImage({ src, alt, className, fill, style, ...props 
           loading="lazy"
           onLoad={() => setIsLoading(false)}
           onError={() => {
-            setIsLoading(false);
-            setHasError(true);
+            // If direct URL failed and we haven't tried proxy yet, try proxy
+            if (isGoogleDrive && !useProxy) {
+              setUseProxy(true);
+              setIsLoading(true);
+            } else {
+              setIsLoading(false);
+              setHasError(true);
+            }
           }}
         />
       </>
