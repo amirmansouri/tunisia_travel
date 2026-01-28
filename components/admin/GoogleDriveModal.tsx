@@ -93,9 +93,9 @@ export default function GoogleDriveModal({ isOpen, onClose, onAddImages }: Googl
                 <ol className="list-decimal list-inside space-y-1 text-blue-800">
                   <li>Open <a href="https://drive.google.com" target="_blank" rel="noopener noreferrer" className="underline">Google Drive</a></li>
                   <li>Right-click on an image</li>
-                  <li>Click <strong>"Get link"</strong> or <strong>"Share"</strong></li>
-                  <li>Set access to <strong>"Anyone with the link"</strong></li>
-                  <li>Click <strong>"Copy link"</strong></li>
+                  <li>Click <strong>&quot;Get link&quot;</strong> or <strong>&quot;Share&quot;</strong></li>
+                  <li>Set access to <strong>&quot;Anyone with the link&quot;</strong></li>
+                  <li>Click <strong>&quot;Copy link&quot;</strong></li>
                   <li>Paste the link below</li>
                 </ol>
                 <p className="text-blue-700 mt-2">
