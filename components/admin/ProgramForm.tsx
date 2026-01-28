@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Plus, X, MapPin, Trash2, ImageIcon, FolderOpen } from 'lucide-react';
+import { Loader2, Plus, X, MapPin, Trash2, ImageIcon, FolderOpen, Upload } from 'lucide-react';
 import { Program, ProgramCategory, ItineraryDay } from '@/types/database';
 import SmartImage from '@/components/SmartImage';
 import GoogleDriveModal from '@/components/admin/GoogleDriveModal';
@@ -46,6 +46,30 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
 
   const [showItinerary, setShowItinerary] = useState((program?.itinerary?.length || 0) > 0);
   const [dayImageUrls, setDayImageUrls] = useState<{ [key: number]: string }>({});
+  const [uploading, setUploading] = useState(false);
+
+  // Upload to Cloudinary
+  const uploadToCloudinary = async (file: File): Promise<string | null> => {
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/admin/cloudinary-upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.url) {
+        return data.url;
+      }
+      return null;
+    } catch (err) {
+      console.error('Upload failed:', err);
+      return null;
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -384,6 +408,36 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
           ))}
         </div>
 
+        {/* Upload Image */}
+        <div className="mb-4">
+          <label className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer transition-colors">
+            <Upload className="h-5 w-5" />
+            {uploading ? 'Uploading...' : 'Upload Image'}
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              disabled={uploading}
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const url = await uploadToCloudinary(file);
+                  if (url) {
+                    setFormData((prev) => ({
+                      ...prev,
+                      images: [...prev.images, url],
+                    }));
+                  }
+                }
+                e.target.value = '';
+              }}
+            />
+          </label>
+          <span className="ml-3 text-sm text-green-600 font-medium">
+            Recommended - Works on all devices
+          </span>
+        </div>
+
         {/* Add Image URL */}
         <div className="flex gap-2 mb-4">
           <input
@@ -415,7 +469,7 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
             Google Drive Links
           </button>
           <span className="text-sm text-gray-500">
-            Add multiple Google Drive links at once
+            Google Drive (works on most browsers)
           </span>
         </div>
 
@@ -591,6 +645,36 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
                           ))}
                         </div>
                       )}
+                      {/* Upload button for day */}
+                      <div className="mb-2">
+                        <label className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-600 text-white rounded text-sm hover:bg-green-700 cursor-pointer transition-colors">
+                          <Upload className="h-4 w-4" />
+                          Upload
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            disabled={uploading}
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                const url = await uploadToCloudinary(file);
+                                if (url) {
+                                  setFormData((prev) => {
+                                    const newItinerary = [...prev.itinerary];
+                                    if (!newItinerary[index].images) {
+                                      newItinerary[index].images = [];
+                                    }
+                                    newItinerary[index].images!.push(url);
+                                    return { ...prev, itinerary: newItinerary };
+                                  });
+                                }
+                              }
+                              e.target.value = '';
+                            }}
+                          />
+                        </label>
+                      </div>
                       {/* Add image URL input */}
                       <div className="flex gap-2 mb-2">
                         <input

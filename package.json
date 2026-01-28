@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
+    "cloudinary": "^2.9.0",
     "clsx": "^2.1.0",
     "framer-motion": "^12.29.2",
     "lucide-react": "^0.309.0",
