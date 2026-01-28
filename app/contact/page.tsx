@@ -40,7 +40,7 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-900">Address</h3>
-                        <p className="text-gray-600 mt-1">Tunis, Tunisia</p>
+                        <p className="text-gray-600 mt-1">Hammamet, Tunisia</p>
                       </div>
                     </div>
 
@@ -50,8 +50,8 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-900">Email</h3>
-                        <a href="mailto:contact@arivotravel.com" className="text-tunisia-blue hover:underline mt-1 block">
-                          contact@arivotravel.com
+                        <a href="mailto:yallahabibi.voyage@gmail.com" className="text-tunisia-blue hover:underline mt-1 block">
+                          yallahabibi.voyage@gmail.com
                         </a>
                       </div>
                     </div>
@@ -62,8 +62,8 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-900">Phone</h3>
-                        <a href="tel:+21612345678" className="text-tunisia-blue hover:underline mt-1 block">
-                          +216 12 345 678
+                        <a href="tel:+21627419167" className="text-tunisia-blue hover:underline mt-1 block">
+                          +216 27 419 167
                         </a>
                       </div>
                     </div>
