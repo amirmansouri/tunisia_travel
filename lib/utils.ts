@@ -30,7 +30,10 @@ export function formatDateRange(startDate: string, endDate: string): string {
   return `${startFormatted} - ${endFormatted}`;
 }
 
-export function formatPrice(price: number): string {
+export function formatPrice(price: number | null | undefined): string {
+  if (price === null || price === undefined) {
+    return 'Prix à confirmer';
+  }
   return new Intl.NumberFormat('en-TN', {
     style: 'currency',
     currency: 'TND',

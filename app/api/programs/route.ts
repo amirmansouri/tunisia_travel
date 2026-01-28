@@ -32,8 +32,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { title, description, price, start_date, end_date, location, images, published, category, itinerary } = body;
 
-    // Validate required fields
-    if (!title || !description || !price || !start_date || !end_date || !location) {
+    // Validate required fields (price is optional)
+    if (!title || !description || !start_date || !end_date || !location) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     const insertData = {
       title,
       description,
-      price: parseFloat(price),
+      price: price ? parseFloat(price) : null,
       start_date,
       end_date,
       location,

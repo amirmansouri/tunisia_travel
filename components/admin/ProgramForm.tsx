@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Loader2, Plus, X, MapPin, GripVertical, Trash2 } from 'lucide-react';
+import { Loader2, Plus, X, MapPin, GripVertical, Trash2, ImageIcon } from 'lucide-react';
 import { Program, ProgramCategory, ItineraryDay } from '@/types/database';
 
 const categories: { value: ProgramCategory; label: string }[] = [
@@ -29,7 +29,7 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
   const [formData, setFormData] = useState({
     title: program?.title || '',
     description: program?.description || '',
-    price: program?.price || 0,
+    price: program?.price ?? '',
     start_date: program?.start_date || '',
     end_date: program?.end_date || '',
     location: program?.location || '',
@@ -40,6 +40,7 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
   });
 
   const [showItinerary, setShowItinerary] = useState((program?.itinerary?.length || 0) > 0);
+  const [dayImageUrls, setDayImageUrls] = useState<{ [key: number]: string }>({});
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -84,6 +85,7 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
       activities: [],
       meals: { breakfast: false, lunch: false, dinner: false },
       accommodation: '',
+      images: [],
     };
     setFormData((prev) => ({
       ...prev,
@@ -129,6 +131,32 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
       itinerary: prev.itinerary.map((day, i) =>
         i === dayIndex
           ? { ...day, activities: day.activities?.filter((_, ai) => ai !== activityIndex) }
+          : day
+      ),
+    }));
+  };
+
+  const addDayImage = (dayIndex: number) => {
+    const url = dayImageUrls[dayIndex];
+    if (url && url.trim()) {
+      setFormData((prev) => ({
+        ...prev,
+        itinerary: prev.itinerary.map((day, i) =>
+          i === dayIndex
+            ? { ...day, images: [...(day.images || []), url.trim()] }
+            : day
+        ),
+      }));
+      setDayImageUrls((prev) => ({ ...prev, [dayIndex]: '' }));
+    }
+  };
+
+  const removeDayImage = (dayIndex: number, imageIndex: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      itinerary: prev.itinerary.map((day, i) =>
+        i === dayIndex
+          ? { ...day, images: day.images?.filter((_, ii) => ii !== imageIndex) }
           : day
       ),
     }));
@@ -230,15 +258,14 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
 
             <div>
               <label htmlFor="price" className="label">
-                Price (TND) *
+                Price (TND)
               </label>
               <input
                 type="number"
                 id="price"
                 name="price"
-                value={formData.price}
+                value={formData.price || ''}
                 onChange={handleChange}
-                required
                 min="0"
                 step="0.01"
                 className="input"
@@ -493,6 +520,57 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
                       >
                         + Add Activity
                       </button>
+                    </div>
+
+                    {/* Day Images */}
+                    <div>
+                      <label className="label text-sm mb-2">
+                        <ImageIcon className="h-4 w-4 inline mr-1" />
+                        Day Images
+                      </label>
+                      {/* Image thumbnails */}
+                      {day.images && day.images.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          {day.images.map((img, imgIndex) => (
+                            <div key={imgIndex} className="relative group w-20 h-14">
+                              <Image
+                                src={img}
+                                alt={`Day ${day.day} image ${imgIndex + 1}`}
+                                fill
+                                className="object-cover rounded"
+                                sizes="80px"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => removeDayImage(index, imgIndex)}
+                                className="absolute -top-1 -right-1 bg-red-500 text-white p-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {/* Add image input */}
+                      <div className="flex gap-2">
+                        <input
+                          type="url"
+                          value={dayImageUrls[index] || ''}
+                          onChange={(e) =>
+                            setDayImageUrls((prev) => ({ ...prev, [index]: e.target.value }))
+                          }
+                          placeholder="Paste image URL"
+                          className="input flex-1 text-sm py-1"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => addDayImage(index)}
+                          disabled={!dayImageUrls[index]?.trim()}
+                          className="px-3 py-1 bg-tunisia-blue text-white rounded text-sm hover:bg-blue-700 disabled:opacity-50"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
 

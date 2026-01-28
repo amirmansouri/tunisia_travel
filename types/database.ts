@@ -15,13 +15,14 @@ export interface ItineraryDay {
     dinner?: boolean;
   };
   accommodation?: string;
+  images?: string[];
 }
 
 export interface Program {
   id: string;
   title: string;
   description: string;
-  price: number;
+  price: number | null;
   start_date: string;
   end_date: string;
   location: string;
@@ -91,7 +92,7 @@ export interface Visitor {
 export interface CreateProgramInput {
   title: string;
   description: string;
-  price: number;
+  price?: number | null;
   start_date: string;
   end_date: string;
   location: string;

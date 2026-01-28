@@ -4,8 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Mail, Phone, Calendar, MessageSquare, MoreVertical, Trash2, StickyNote } from 'lucide-react';
 import { ReservationWithProgram, ReservationStatus } from '@/types/database';
-import { formatDate } from '@/lib/utils';
-import { cn } from '@/lib/utils';
+import { formatDate, formatPrice, cn } from '@/lib/utils';
 
 interface ReservationCardProps {
   reservation: ReservationWithProgram;
@@ -257,10 +256,7 @@ export default function ReservationCard({ reservation }: ReservationCardProps) {
                 {reservation.program.location}
               </p>
               <p className="text-sm font-semibold text-tunisia-red mt-2">
-                {new Intl.NumberFormat('en-TN', {
-                  style: 'currency',
-                  currency: 'TND',
-                }).format(reservation.program.price)}
+                {formatPrice(reservation.program.price)}
               </p>
             </div>
           ) : (

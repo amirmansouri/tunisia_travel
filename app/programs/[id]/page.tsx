@@ -4,6 +4,7 @@ import { MapPin, Calendar, Clock, ArrowLeft, DollarSign, Utensils, Home, CheckCi
 import Header from '@/components/public/Header';
 import Footer from '@/components/public/Footer';
 import ImageGallery from '@/components/public/ImageGallery';
+import DayImageGallery from '@/components/public/DayImageGallery';
 import ReservationForm from '@/components/public/ReservationForm';
 import Reviews from '@/components/public/Reviews';
 import AdBanner from '@/components/AdBanner';
@@ -177,6 +178,15 @@ export default async function ProgramDetailPage({ params }: PageProps) {
                               <p className="text-gray-600 text-sm mb-3">
                                 {day.description}
                               </p>
+                            )}
+
+                            {/* Day Images Gallery */}
+                            {day.images && day.images.length > 0 && (
+                              <DayImageGallery
+                                images={day.images}
+                                dayNumber={day.day}
+                                dayTitle={day.title}
+                              />
                             )}
 
                             {/* Activities */}

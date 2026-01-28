@@ -46,8 +46,14 @@ export default function ProgramsContent({ programs }: ProgramsContentProps) {
     result.sort((a, b) => {
       switch (sortBy) {
         case 'priceAsc':
+          // Programs without price go to end
+          if (a.price === null) return 1;
+          if (b.price === null) return -1;
           return a.price - b.price;
         case 'priceDesc':
+          // Programs without price go to end
+          if (a.price === null) return 1;
+          if (b.price === null) return -1;
           return b.price - a.price;
         case 'dateAsc':
           return new Date(a.start_date).getTime() - new Date(b.start_date).getTime();
