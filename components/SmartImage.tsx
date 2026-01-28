@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image, { ImageProps } from 'next/image';
-import { getImageUrl, isGoogleDriveUrl, extractGoogleDriveId } from '@/lib/utils';
+import { getImageUrl, isGoogleDriveUrl } from '@/lib/utils';
 import { ImageIcon } from 'lucide-react';
 
 interface SmartImageProps extends Omit<ImageProps, 'src'> {
@@ -10,19 +10,13 @@ interface SmartImageProps extends Omit<ImageProps, 'src'> {
 }
 
 /**
- * SmartImage - Automatically handles Google Drive images
- * Always uses proxy for Google Drive to work on all devices
+ * SmartImage - Handles Google Drive images with direct thumbnail URL
  */
 export default function SmartImage({ src, alt, className, fill, style, ...props }: SmartImageProps) {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const isGoogleDrive = isGoogleDriveUrl(src);
-  const fileId = extractGoogleDriveId(src);
-
-  // Always use proxy for Google Drive images
-  const imageUrl = isGoogleDrive && fileId
-    ? `/api/image-proxy?id=${fileId}`
-    : getImageUrl(src);
+  const imageUrl = getImageUrl(src);
 
   // Show placeholder if error or no src
   if (hasError || !src) {
