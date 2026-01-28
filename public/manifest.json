@@ -3,6 +3,7 @@
   "short_name": "Yalla Habibi",
   "description": "Discover Tunisia with our travel programs",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#dc2626",

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'yalla-habibi-v1';
+const CACHE_NAME = 'yalla-habibi-v2';
 const urlsToCache = [
   '/',
   '/programs',
@@ -34,13 +34,21 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event - Network first, fallback to cache
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+
+  // Skip caching for admin routes and API routes - always use network
+  if (url.pathname.startsWith('/admin') || url.pathname.startsWith('/api')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {
         // Clone the response
         const responseClone = response.clone();
 
-        // Cache successful responses
+        // Cache successful responses for non-admin pages
         if (response.status === 200) {
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseClone);
