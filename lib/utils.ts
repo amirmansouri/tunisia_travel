@@ -115,8 +115,8 @@ export function getImageUrl(url: string): string {
 
   const fileId = extractGoogleDriveId(url);
   if (fileId) {
-    // Use Google Drive thumbnail - works on most browsers
-    return `https://drive.google.com/thumbnail?id=${fileId}&sz=w2000`;
+    // Use proxy to work on all browsers including Chrome mobile
+    return `/api/image-proxy?id=${fileId}`;
   }
 
   return url;
