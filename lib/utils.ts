@@ -115,8 +115,8 @@ export function getImageUrl(url: string): string {
 
   const fileId = extractGoogleDriveId(url);
   if (fileId) {
-    // Use lh3.googleusercontent.com format - works better on mobile
-    return `https://lh3.googleusercontent.com/d/${fileId}=w1000`;
+    // Use thumbnail format with large size - most reliable for embedding
+    return `https://drive.google.com/thumbnail?id=${fileId}&sz=w2000`;
   }
 
   // Return original URL for other image sources
