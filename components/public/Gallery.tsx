@@ -366,6 +366,14 @@ export default function Gallery() {
                       className="object-cover"
                       sizes="64px"
                     />
+                    <Image
+                      src={getGoogleDriveUrl(image.fileId)}
+                      alt={image.alt}
+                      fill
+                      unoptimized
+                      className="object-cover"
+                      sizes="64px"
+                    />
                   </button>
                 ))}
               </div>
