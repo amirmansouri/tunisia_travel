@@ -101,19 +101,19 @@ export default async function ReservationSuccessPage({ searchParams }: PageProps
             <p className="mt-8 text-sm text-gray-500">
               Have questions? Contact us at{' '}
               <a
-                href="mailto:amirmansouri@engineer.com"
+                href="mailto:yallahabibi.voyage@gmail.com"
                 className="text-tunisia-blue hover:underline"
               >
-                amirmansouri@engineer.com
+                yallahabibi.voyage@gmail.com
               </a>{' '}
               or WhatsApp{' '}
               <a
-                href="https://wa.me/21627069149"
+                href="https://wa.me/21627419167"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-tunisia-blue hover:underline"
               >
-                +216 27 069 149
+                +216 27 419 167
               </a>
             </p>
           </div>
