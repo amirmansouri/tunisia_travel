@@ -4,9 +4,14 @@ import { useEffect } from 'react';
 
 export default function VisitorTracker() {
   useEffect(() => {
-    // Only track once per session
-    if (typeof window !== 'undefined' && sessionStorage.getItem('visitor_tracked')) {
-      return;
+    if (typeof window === 'undefined') return;
+
+    // Check if already tracked today
+    const lastTracked = localStorage.getItem('visitor_tracked_date');
+    const today = new Date().toDateString();
+
+    if (lastTracked === today) {
+      return; // Already tracked today
     }
 
     const trackVisitor = async () => {
@@ -20,11 +25,8 @@ export default function VisitorTracker() {
         });
 
         if (response.ok) {
-          // Mark as tracked for this session
-          sessionStorage.setItem('visitor_tracked', 'true');
-          console.log('Visitor tracked successfully');
-        } else {
-          console.error('Failed to track visitor:', response.status);
+          // Mark as tracked for today
+          localStorage.setItem('visitor_tracked_date', today);
         }
       } catch (error) {
         console.error('Error tracking visitor:', error);

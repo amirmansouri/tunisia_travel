@@ -14,6 +14,19 @@ export const metadata: Metadata = {
     'Explore Tunisia with our curated travel programs. From Sahara adventures to Mediterranean beaches, discover ancient ruins, vibrant medinas, and authentic Tunisian experiences.',
   keywords:
     'Tunisia, travel, tourism, Sahara, Carthage, Tunis, Djerba, Hammamet, tours, vacation, Yalla Habibi',
+  manifest: '/manifest.json',
+  themeColor: '#dc2626',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Yalla Habibi',
+  },
   openGraph: {
     title: 'Yalla Habibi - Discover the Jewel of North Africa',
     description:
@@ -31,6 +44,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* PWA */}
+        <link rel="apple-touch-icon" href="/icon-192.png" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         {/* Google AdSense */}
         <meta name="google-adsense-account" content="ca-pub-5498625393510379" />
         <script

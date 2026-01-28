@@ -41,7 +41,20 @@ export async function POST(request: NextRequest) {
     const country = request.headers.get('x-vercel-ip-country') || null;
     const city = request.headers.get('x-vercel-ip-city') || null;
 
-    console.log('Tracking visitor:', { ip_address, country, city });
+    // Check if this IP was already tracked today (prevent duplicates)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const { data: existing } = await adminClient
+      .from('visitors')
+      .select('id')
+      .eq('ip_address', ip_address)
+      .gte('created_at', today.toISOString())
+      .limit(1);
+
+    if (existing && existing.length > 0) {
+      return NextResponse.json({ success: true, message: 'Already tracked today' });
+    }
 
     const { data, error } = await adminClient
       .from('visitors')

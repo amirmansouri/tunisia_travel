@@ -412,20 +412,27 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
         <div className="mb-4">
           <label className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer transition-colors">
             <Upload className="h-5 w-5" />
-            {uploading ? 'Uploading...' : 'Upload Image'}
+            {uploading ? 'Uploading...' : 'Upload Images'}
             <input
               type="file"
               accept="image/*"
+              multiple
               className="hidden"
               disabled={uploading}
               onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  const url = await uploadToCloudinary(file);
-                  if (url) {
+                const files = e.target.files;
+                if (files && files.length > 0) {
+                  const uploadedUrls: string[] = [];
+                  for (let i = 0; i < files.length; i++) {
+                    const url = await uploadToCloudinary(files[i]);
+                    if (url) {
+                      uploadedUrls.push(url);
+                    }
+                  }
+                  if (uploadedUrls.length > 0) {
                     setFormData((prev) => ({
                       ...prev,
-                      images: [...prev.images, url],
+                      images: [...prev.images, ...uploadedUrls],
                     }));
                   }
                 }
@@ -434,7 +441,7 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
             />
           </label>
           <span className="ml-3 text-sm text-green-600 font-medium">
-            Recommended - Works on all devices
+            Recommended - Works on all devices (select multiple)
           </span>
         </div>
 
@@ -653,19 +660,26 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
                           <input
                             type="file"
                             accept="image/*"
+                            multiple
                             className="hidden"
                             disabled={uploading}
                             onChange={async (e) => {
-                              const file = e.target.files?.[0];
-                              if (file) {
-                                const url = await uploadToCloudinary(file);
-                                if (url) {
+                              const files = e.target.files;
+                              if (files && files.length > 0) {
+                                const uploadedUrls: string[] = [];
+                                for (let i = 0; i < files.length; i++) {
+                                  const url = await uploadToCloudinary(files[i]);
+                                  if (url) {
+                                    uploadedUrls.push(url);
+                                  }
+                                }
+                                if (uploadedUrls.length > 0) {
                                   setFormData((prev) => {
                                     const newItinerary = [...prev.itinerary];
                                     if (!newItinerary[index].images) {
                                       newItinerary[index].images = [];
                                     }
-                                    newItinerary[index].images!.push(url);
+                                    newItinerary[index].images!.push(...uploadedUrls);
                                     return { ...prev, itinerary: newItinerary };
                                   });
                                 }

@@ -220,3 +220,25 @@ html {
 [dir="rtl"] .text-left {
   text-align: right;
 }
+
+/* PWA Install prompt */
+.pwa-install-banner {
+  @apply fixed bottom-0 left-0 right-0 bg-tunisia-red text-white p-4 flex items-center justify-between z-50;
+}
+
+/* Safe area for notched phones */
+@supports (padding: max(0px)) {
+  .safe-area-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  .safe-area-top {
+    padding-top: max(0px, env(safe-area-inset-top));
+  }
+}
+
+/* Standalone mode (installed app) */
+@media (display-mode: standalone) {
+  .show-in-browser {
+    display: none;
+  }
+}
