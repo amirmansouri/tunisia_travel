@@ -5,6 +5,7 @@ import VisitorTracker from '@/components/VisitorTracker';
 import { LanguageProvider } from '@/lib/i18n';
 import { FavoritesProvider } from '@/lib/favorites';
 import WhatsAppButton from '@/components/public/WhatsAppButton';
+import PWAInstall from '@/components/PWAInstall';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -63,6 +64,7 @@ export default function RootLayout({
             <VisitorTracker />
             {children}
             <WhatsAppButton phoneNumber="+21612345678" />
+            <PWAInstall />
           </FavoritesProvider>
         </LanguageProvider>
       </body>
