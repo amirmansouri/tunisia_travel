@@ -115,8 +115,8 @@ export function getImageUrl(url: string): string {
 
   const fileId = extractGoogleDriveId(url);
   if (fileId) {
-    // Use lh3.googleusercontent.com format - more direct
-    return `https://lh3.googleusercontent.com/d/${fileId}=w1200`;
+    // Use proxy - works on all devices including Vercel
+    return `/api/image-proxy?id=${fileId}`;
   }
 
   // Return original URL for other image sources
