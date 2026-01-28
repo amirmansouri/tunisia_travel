@@ -617,6 +617,7 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
                           className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-gray-300 rounded text-gray-700 hover:bg-gray-50 transition-colors text-sm"
                         >
                           <FolderOpen className="h-4 w-4" />
+                          Drive
                         </button>
                       </div>
                     </div>

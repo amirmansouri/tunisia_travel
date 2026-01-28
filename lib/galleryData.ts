@@ -9,7 +9,7 @@ export interface GalleryImage {
 
 // Helper function to generate Google Drive direct view URL
 export function getGoogleDriveUrl(fileId: string): string {
-  return `/api/image-proxy?id=${fileId}`;
+  return `https://lh3.googleusercontent.com/d/${fileId}=w1200`;
 }
 
 // Gallery images data

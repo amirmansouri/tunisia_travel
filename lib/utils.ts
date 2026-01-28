@@ -115,8 +115,8 @@ export function getImageUrl(url: string): string {
 
   const fileId = extractGoogleDriveId(url);
   if (fileId) {
-    // Use image proxy for Google Drive - works on mobile
-    return `/api/image-proxy?id=${fileId}`;
+    // Use lh3.googleusercontent.com format - more direct
+    return `https://lh3.googleusercontent.com/d/${fileId}=w1200`;
   }
 
   // Return original URL for other image sources
