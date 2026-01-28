@@ -8,9 +8,9 @@ export interface GalleryImage {
 }
 
 // Helper function to generate Google Drive direct view URL
-// Uses thumbnail endpoint which is more reliable
+// Uses lh3.googleusercontent.com format - works better on mobile
 export function getGoogleDriveUrl(fileId: string): string {
-  return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+  return `https://lh3.googleusercontent.com/d/${fileId}=w1000`;
 }
 
 // Gallery images data

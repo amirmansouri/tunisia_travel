@@ -115,8 +115,8 @@ export function getImageUrl(url: string): string {
 
   const fileId = extractGoogleDriveId(url);
   if (fileId) {
-    // Use thumbnail endpoint with large size - more reliable than uc?export=view
-    return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+    // Use lh3.googleusercontent.com format - works better on mobile
+    return `https://lh3.googleusercontent.com/d/${fileId}=w1000`;
   }
 
   // Return original URL for other image sources
