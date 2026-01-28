@@ -115,8 +115,8 @@ export function getImageUrl(url: string): string {
 
   const fileId = extractGoogleDriveId(url);
   if (fileId) {
-    // Use proxy - works on all devices including Vercel
-    return `/api/image-proxy?id=${fileId}`;
+    // Use thumbnail format - works on desktop
+    return `https://drive.google.com/thumbnail?id=${fileId}&sz=w2000`;
   }
 
   // Return original URL for other image sources
