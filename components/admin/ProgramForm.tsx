@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Plus, X, MapPin, Trash2, ImageIcon, FolderOpen } from 'lucide-react';
+import { Loader2, Plus, X, MapPin, Trash2, ImageIcon, FolderOpen, Upload } from 'lucide-react';
 import { Program, ProgramCategory, ItineraryDay } from '@/types/database';
 import SmartImage from '@/components/SmartImage';
 import GoogleDriveModal from '@/components/admin/GoogleDriveModal';
+import ImageUpload from '@/components/admin/ImageUpload';
 
 const categories: { value: ProgramCategory; label: string }[] = [
   { value: 'adventure', label: 'Aventure' },
@@ -384,13 +385,38 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
           ))}
         </div>
 
+        {/* Upload Image - Recommended */}
+        <div className="mb-6">
+          <h3 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+            <Upload className="h-4 w-4" />
+            Upload Image (Recommended - works on all devices)
+          </h3>
+          <ImageUpload
+            onUpload={(url) => {
+              setFormData((prev) => ({
+                ...prev,
+                images: [...prev.images, url],
+              }));
+            }}
+          />
+        </div>
+
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-200" />
+          </div>
+          <div className="relative flex justify-center">
+            <span className="bg-white px-4 text-sm text-gray-500">OR</span>
+          </div>
+        </div>
+
         {/* Add Image URL */}
         <div className="flex gap-2 mb-4">
           <input
             type="url"
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
-            placeholder="Paste Google Drive link or image URL"
+            placeholder="Paste image URL"
             className="input flex-1"
           />
           <button
@@ -412,16 +438,15 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
             className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
           >
             <FolderOpen className="h-5 w-5" />
-            Select from Google Drive
+            Google Drive Links
           </button>
           <span className="text-sm text-gray-500">
-            Paste multiple Google Drive links at once
+            Paste multiple Google Drive links (may not work on mobile)
           </span>
         </div>
 
         <p className="text-sm text-gray-500 mt-4">
-          The first image will be used as the cover. You can paste Google Drive links like:
-          <code className="mx-1 px-2 py-0.5 bg-gray-100 rounded text-xs">https://drive.google.com/file/d/FILE_ID/view</code>
+          The first image will be used as the cover.
         </p>
       </div>
 
@@ -592,7 +617,45 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
                           ))}
                         </div>
                       )}
-                      {/* Add image input */}
+                      {/* Upload button for day */}
+                      <div className="mb-2">
+                        <label className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-tunisia-blue text-white rounded text-sm hover:bg-blue-700 cursor-pointer transition-colors">
+                          <Upload className="h-4 w-4" />
+                          Upload
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              const uploadFormData = new FormData();
+                              uploadFormData.append('file', file);
+                              try {
+                                const res = await fetch('/api/admin/upload', {
+                                  method: 'POST',
+                                  body: uploadFormData,
+                                });
+                                const data = await res.json();
+                                if (data.url) {
+                                  setFormData((prev) => {
+                                    const newItinerary = [...prev.itinerary];
+                                    if (!newItinerary[index].images) {
+                                      newItinerary[index].images = [];
+                                    }
+                                    newItinerary[index].images!.push(data.url);
+                                    return { ...prev, itinerary: newItinerary };
+                                  });
+                                }
+                              } catch (err) {
+                                console.error('Upload failed:', err);
+                              }
+                              e.target.value = '';
+                            }}
+                          />
+                        </label>
+                      </div>
+                      {/* Add image URL input */}
                       <div className="flex gap-2 mb-2">
                         <input
                           type="url"
@@ -600,27 +663,26 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
                           onChange={(e) =>
                             setDayImageUrls((prev) => ({ ...prev, [index]: e.target.value }))
                           }
-                          placeholder="Paste Google Drive or image URL"
+                          placeholder="Or paste image URL"
                           className="input flex-1 text-sm py-1"
                         />
                         <button
                           type="button"
                           onClick={() => addDayImage(index)}
                           disabled={!dayImageUrls[index]?.trim()}
-                          className="px-3 py-1 bg-tunisia-blue text-white rounded text-sm hover:bg-blue-700 disabled:opacity-50"
+                          className="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 disabled:opacity-50"
                         >
                           <Plus className="h-4 w-4" />
                         </button>
+                        {/* Google Drive Button for Day */}
+                        <button
+                          type="button"
+                          onClick={() => setDayDriveModalIndex(index)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-gray-300 rounded text-gray-700 hover:bg-gray-50 transition-colors text-sm"
+                        >
+                          <FolderOpen className="h-4 w-4" />
+                        </button>
                       </div>
-                      {/* Google Drive Button for Day */}
-                      <button
-                        type="button"
-                        onClick={() => setDayDriveModalIndex(index)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-gray-300 rounded text-gray-700 hover:bg-gray-50 transition-colors text-sm"
-                      >
-                        <FolderOpen className="h-4 w-4" />
-                        Drive
-                      </button>
                     </div>
                   </div>
 
