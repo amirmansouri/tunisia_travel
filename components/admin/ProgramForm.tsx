@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Loader2, Plus, X } from 'lucide-react';
-import { Program, ProgramCategory } from '@/types/database';
+import { Loader2, Plus, X, MapPin, GripVertical, Trash2 } from 'lucide-react';
+import { Program, ProgramCategory, ItineraryDay } from '@/types/database';
 
 const categories: { value: ProgramCategory; label: string }[] = [
   { value: 'adventure', label: 'Aventure' },
@@ -36,7 +36,10 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
     images: program?.images || [],
     published: program?.published || false,
     category: program?.category || '' as ProgramCategory | '',
+    itinerary: program?.itinerary || [] as ItineraryDay[],
   });
+
+  const [showItinerary, setShowItinerary] = useState((program?.itinerary?.length || 0) > 0);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -69,6 +72,66 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
       }));
       setImageUrl('');
     }
+  };
+
+  // Itinerary functions
+  const addItineraryDay = () => {
+    const newDay: ItineraryDay = {
+      day: formData.itinerary.length + 1,
+      location: '',
+      title: '',
+      description: '',
+      activities: [],
+      meals: { breakfast: false, lunch: false, dinner: false },
+      accommodation: '',
+    };
+    setFormData((prev) => ({
+      ...prev,
+      itinerary: [...prev.itinerary, newDay],
+    }));
+  };
+
+  const updateItineraryDay = (index: number, field: keyof ItineraryDay, value: ItineraryDay[keyof ItineraryDay]) => {
+    setFormData((prev) => ({
+      ...prev,
+      itinerary: prev.itinerary.map((day, i) =>
+        i === index ? { ...day, [field]: value } : day
+      ),
+    }));
+  };
+
+  const removeItineraryDay = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      itinerary: prev.itinerary
+        .filter((_, i) => i !== index)
+        .map((day, i) => ({ ...day, day: i + 1 })),
+    }));
+  };
+
+  const addActivity = (dayIndex: number) => {
+    const activity = prompt('Enter activity:');
+    if (activity) {
+      setFormData((prev) => ({
+        ...prev,
+        itinerary: prev.itinerary.map((day, i) =>
+          i === dayIndex
+            ? { ...day, activities: [...(day.activities || []), activity] }
+            : day
+        ),
+      }));
+    }
+  };
+
+  const removeActivity = (dayIndex: number, activityIndex: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      itinerary: prev.itinerary.map((day, i) =>
+        i === dayIndex
+          ? { ...day, activities: day.activities?.filter((_, ai) => ai !== activityIndex) }
+          : day
+      ),
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -295,6 +358,166 @@ export default function ProgramForm({ program, mode }: ProgramFormProps) {
           Paste image URLs from the web. The first image will be used as the cover.
           You can use free image hosting like <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer" className="text-tunisia-blue hover:underline">Unsplash</a> or <a href="https://imgur.com" target="_blank" rel="noopener noreferrer" className="text-tunisia-blue hover:underline">Imgur</a>.
         </p>
+      </div>
+
+      {/* Itinerary Builder */}
+      <div className="bg-white rounded-xl p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Program Itinerary
+            </h2>
+            <p className="text-sm text-gray-500">
+              Add day-by-day details for multi-destination programs
+            </p>
+          </div>
+          <label className="flex items-center space-x-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showItinerary}
+              onChange={(e) => setShowItinerary(e.target.checked)}
+              className="w-5 h-5 text-tunisia-red rounded border-gray-300 focus:ring-tunisia-red"
+            />
+            <span className="text-sm font-medium text-gray-700">Enable Itinerary</span>
+          </label>
+        </div>
+
+        {showItinerary && (
+          <div className="space-y-4">
+            {formData.itinerary.map((day, index) => (
+              <div
+                key={index}
+                className="border border-gray-200 rounded-lg p-4 bg-gray-50"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="flex items-center justify-center w-10 h-10 bg-tunisia-red text-white rounded-full font-bold text-lg flex-shrink-0">
+                    {day.day}
+                  </div>
+
+                  <div className="flex-1 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="label text-sm">Location *</label>
+                        <div className="relative">
+                          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          <input
+                            type="text"
+                            value={day.location}
+                            onChange={(e) => updateItineraryDay(index, 'location', e.target.value)}
+                            placeholder="e.g., Hammamet"
+                            className="input pl-10"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="label text-sm">Day Title *</label>
+                        <input
+                          type="text"
+                          value={day.title}
+                          onChange={(e) => updateItineraryDay(index, 'title', e.target.value)}
+                          placeholder="e.g., Beach & Medina Tour"
+                          className="input"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="label text-sm">Description</label>
+                      <textarea
+                        value={day.description}
+                        onChange={(e) => updateItineraryDay(index, 'description', e.target.value)}
+                        placeholder="Describe what happens on this day..."
+                        rows={2}
+                        className="input resize-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="label text-sm">Accommodation</label>
+                      <input
+                        type="text"
+                        value={day.accommodation || ''}
+                        onChange={(e) => updateItineraryDay(index, 'accommodation', e.target.value)}
+                        placeholder="e.g., Hotel Hammamet Beach 4*"
+                        className="input"
+                      />
+                    </div>
+
+                    {/* Meals */}
+                    <div>
+                      <label className="label text-sm mb-2">Meals Included</label>
+                      <div className="flex gap-4">
+                        {(['breakfast', 'lunch', 'dinner'] as const).map((meal) => (
+                          <label key={meal} className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={day.meals?.[meal] || false}
+                              onChange={(e) =>
+                                updateItineraryDay(index, 'meals', {
+                                  ...day.meals,
+                                  [meal]: e.target.checked,
+                                })
+                              }
+                              className="w-4 h-4 text-tunisia-red rounded border-gray-300 focus:ring-tunisia-red"
+                            />
+                            <span className="text-sm capitalize">{meal}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Activities */}
+                    <div>
+                      <label className="label text-sm mb-2">Activities</label>
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {day.activities?.map((activity, ai) => (
+                          <span
+                            key={ai}
+                            className="inline-flex items-center gap-1 px-3 py-1 bg-tunisia-blue/10 text-tunisia-blue rounded-full text-sm"
+                          >
+                            {activity}
+                            <button
+                              type="button"
+                              onClick={() => removeActivity(index, ai)}
+                              className="hover:text-red-500"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => addActivity(index)}
+                        className="text-sm text-tunisia-blue hover:underline"
+                      >
+                        + Add Activity
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => removeItineraryDay(index)}
+                    className="text-red-500 hover:text-red-700 p-2"
+                    title="Remove day"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+            ))}
+
+            <button
+              type="button"
+              onClick={addItineraryDay}
+              className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-tunisia-red hover:text-tunisia-red transition-colors flex items-center justify-center gap-2"
+            >
+              <Plus className="h-5 w-5" />
+              Add Day {formData.itinerary.length + 1}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Publishing Options */}

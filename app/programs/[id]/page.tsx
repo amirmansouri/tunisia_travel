@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { MapPin, Calendar, Clock, ArrowLeft, DollarSign } from 'lucide-react';
+import { MapPin, Calendar, Clock, ArrowLeft, DollarSign, Utensils, Home, CheckCircle } from 'lucide-react';
 import Header from '@/components/public/Header';
 import Footer from '@/components/public/Footer';
 import ImageGallery from '@/components/public/ImageGallery';
@@ -140,6 +140,92 @@ export default async function ProgramDetailPage({ params }: PageProps) {
                   ))}
                 </div>
               </div>
+
+              {/* Itinerary Timeline */}
+              {program.itinerary && program.itinerary.length > 0 && (
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                    Day-by-Day Itinerary
+                  </h2>
+
+                  <div className="relative">
+                    {/* Timeline line */}
+                    <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-tunisia-red/20" />
+
+                    <div className="space-y-6">
+                      {program.itinerary.map((day, index) => (
+                        <div key={index} className="relative pl-14">
+                          {/* Day number circle */}
+                          <div className="absolute left-0 w-10 h-10 bg-tunisia-red text-white rounded-full flex items-center justify-center font-bold text-lg z-10">
+                            {day.day}
+                          </div>
+
+                          <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                            {/* Location & Title */}
+                            <div className="flex flex-wrap items-center gap-2 mb-2">
+                              <span className="inline-flex items-center gap-1 px-2 py-1 bg-tunisia-sand/20 text-tunisia-sand rounded text-sm font-medium">
+                                <MapPin className="h-3 w-3" />
+                                {day.location}
+                              </span>
+                              <h3 className="font-semibold text-gray-900">
+                                {day.title}
+                              </h3>
+                            </div>
+
+                            {/* Description */}
+                            {day.description && (
+                              <p className="text-gray-600 text-sm mb-3">
+                                {day.description}
+                              </p>
+                            )}
+
+                            {/* Activities */}
+                            {day.activities && day.activities.length > 0 && (
+                              <div className="mb-3">
+                                <div className="flex flex-wrap gap-2">
+                                  {day.activities.map((activity, ai) => (
+                                    <span
+                                      key={ai}
+                                      className="inline-flex items-center gap-1 px-2 py-1 bg-tunisia-blue/10 text-tunisia-blue rounded-full text-xs"
+                                    >
+                                      <CheckCircle className="h-3 w-3" />
+                                      {activity}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Meals & Accommodation */}
+                            <div className="flex flex-wrap gap-4 text-xs text-gray-500">
+                              {day.meals && (day.meals.breakfast || day.meals.lunch || day.meals.dinner) && (
+                                <div className="flex items-center gap-1">
+                                  <Utensils className="h-3 w-3" />
+                                  <span>
+                                    {[
+                                      day.meals.breakfast && 'Breakfast',
+                                      day.meals.lunch && 'Lunch',
+                                      day.meals.dinner && 'Dinner',
+                                    ]
+                                      .filter(Boolean)
+                                      .join(', ')}
+                                  </span>
+                                </div>
+                              )}
+                              {day.accommodation && (
+                                <div className="flex items-center gap-1">
+                                  <Home className="h-3 w-3" />
+                                  <span>{day.accommodation}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Ad Banner */}
               <div className="my-4">

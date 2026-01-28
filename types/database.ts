@@ -2,6 +2,21 @@ export type ReservationStatus = 'pending' | 'confirmed' | 'completed' | 'cancell
 
 export type ProgramCategory = 'adventure' | 'beach' | 'cultural' | 'desert' | 'city' | 'nature';
 
+// Itinerary day for multi-destination programs
+export interface ItineraryDay {
+  day: number;
+  location: string;
+  title: string;
+  description: string;
+  activities?: string[];
+  meals?: {
+    breakfast?: boolean;
+    lunch?: boolean;
+    dinner?: boolean;
+  };
+  accommodation?: string;
+}
+
 export interface Program {
   id: string;
   title: string;
@@ -13,6 +28,7 @@ export interface Program {
   images: string[];
   published: boolean;
   category?: ProgramCategory;
+  itinerary?: ItineraryDay[];
   created_at: string;
   updated_at?: string;
 }
@@ -82,6 +98,7 @@ export interface CreateProgramInput {
   images: string[];
   published: boolean;
   category?: ProgramCategory;
+  itinerary?: ItineraryDay[];
 }
 
 export interface UpdateProgramInput extends Partial<CreateProgramInput> {
