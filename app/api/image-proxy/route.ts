@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Use Node.js runtime for better compatibility
+// Use Node.js runtime
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+export const maxDuration = 30; // 30 seconds timeout
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -12,45 +13,58 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Missing file ID' }, { status: 400 });
   }
 
-  // Try the most reliable URL format
-  const url = `https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`;
+  // Multiple URL formats to try
+  const urls = [
+    `https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`,
+    `https://lh3.googleusercontent.com/d/${fileId}=w1200`,
+    `https://drive.google.com/uc?export=view&id=${fileId}`,
+  ];
 
-  try {
-    const response = await fetch(url, {
-      redirect: 'follow',
-      headers: {
-        'Accept': 'image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache',
-        'Referer': 'https://drive.google.com/',
-        'Sec-Fetch-Dest': 'image',
-        'Sec-Fetch-Mode': 'no-cors',
-        'Sec-Fetch-Site': 'same-site',
-        'User-Agent': 'Mozilla/5.0 (Linux; Android 13; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
-      },
-    });
+  for (const url of urls) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout per request
 
-    if (!response.ok) {
-      return new NextResponse('Image not found', { status: 404 });
+      const response = await fetch(url, {
+        signal: controller.signal,
+        redirect: 'follow',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+        },
+      });
+
+      clearTimeout(timeoutId);
+
+      if (response.ok) {
+        const contentType = response.headers.get('content-type') || '';
+
+        // Check if it's an image
+        if (contentType.startsWith('image/')) {
+          const data = await response.arrayBuffer();
+
+          return new NextResponse(data, {
+            status: 200,
+            headers: {
+              'Content-Type': contentType,
+              'Cache-Control': 'public, max-age=604800, immutable',
+              'Access-Control-Allow-Origin': '*',
+            },
+          });
+        }
+      }
+    } catch {
+      // Try next URL
+      continue;
     }
-
-    const contentType = response.headers.get('content-type') || 'image/jpeg';
-    const data = await response.arrayBuffer();
-
-    return new NextResponse(data, {
-      status: 200,
-      headers: {
-        'Content-Type': contentType,
-        'Cache-Control': 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'X-Content-Type-Options': 'nosniff',
-      },
-    });
-  } catch (error) {
-    console.error('Image proxy error:', error);
-    return new NextResponse('Failed to fetch image', { status: 500 });
   }
+
+  // Return a 1x1 transparent pixel as fallback
+  const transparentPixel = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
+  return new NextResponse(transparentPixel, {
+    status: 200,
+    headers: {
+      'Content-Type': 'image/gif',
+      'Cache-Control': 'no-cache',
+    },
+  });
 }

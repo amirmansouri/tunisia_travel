@@ -11,18 +11,17 @@ interface SmartImageProps extends Omit<ImageProps, 'src'> {
 
 /**
  * SmartImage - Automatically handles Google Drive images
- * Tries direct URL first, falls back to proxy if it fails (for mobile)
+ * Always uses proxy for Google Drive to work on all devices
  */
 export default function SmartImage({ src, alt, className, fill, style, ...props }: SmartImageProps) {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [useProxy, setUseProxy] = useState(false);
   const isGoogleDrive = isGoogleDriveUrl(src);
   const fileId = extractGoogleDriveId(src);
 
-  // Get the appropriate URL based on whether we need proxy
+  // Always use proxy for Google Drive images
   const imageUrl = isGoogleDrive && fileId
-    ? (useProxy ? `/api/image-proxy?id=${fileId}` : `https://drive.google.com/thumbnail?id=${fileId}&sz=w2000`)
+    ? `/api/image-proxy?id=${fileId}`
     : getImageUrl(src);
 
   // Show placeholder if error or no src
@@ -96,14 +95,8 @@ export default function SmartImage({ src, alt, className, fill, style, ...props 
           loading="lazy"
           onLoad={() => setIsLoading(false)}
           onError={() => {
-            // If direct URL failed and we haven't tried proxy yet, try proxy
-            if (isGoogleDrive && !useProxy) {
-              setUseProxy(true);
-              setIsLoading(true);
-            } else {
-              setIsLoading(false);
-              setHasError(true);
-            }
+            setIsLoading(false);
+            setHasError(true);
           }}
         />
       </>
