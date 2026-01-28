@@ -27,7 +27,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       throw error;
     }
 
-    return NextResponse.json(data);
+    return NextResponse.json(data, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+      },
+    });
   } catch (error) {
     console.error('Error fetching program:', error);
     return NextResponse.json(
@@ -36,6 +40,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     );
   }
 }
+
+// Disable caching for this route
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // PUT - Update a program (admin only)
 export async function PUT(request: NextRequest, { params }: RouteParams) {
