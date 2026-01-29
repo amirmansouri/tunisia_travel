@@ -42,7 +42,7 @@ export default async function ReservationSuccessPage({ searchParams }: PageProps
               <p>
                 Your reservation request for{' '}
                 <span className="font-semibold text-tunisia-red">{program}</span>{' '}
-                has been successfully submitted.
+                has been successfully submitted
               </p>
               <p>
                 Our team will review your request and contact you within{' '}
@@ -89,7 +89,7 @@ export default async function ReservationSuccessPage({ searchParams }: PageProps
             {/* Actions */}
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/programs" className="btn-primary">
-                Browse More Programs
+                Browse More Programs.
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Link>
               <Link href="/" className="btn-outline">
@@ -108,6 +108,7 @@ export default async function ReservationSuccessPage({ searchParams }: PageProps
               </a>{' '}
               or WhatsApp{' '}
               <a
+
                 href="https://wa.me/21627419167"
                 target="_blank"
                 rel="noopener noreferrer"

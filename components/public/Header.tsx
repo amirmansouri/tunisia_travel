@@ -14,35 +14,43 @@ export default function Header() {
   const tapCountRef = useRef(0);
   const tapTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleLogoTap = () => {
+  const handleLogoTap = (e: React.MouseEvent) => {
+    e.preventDefault();
     tapCountRef.current += 1;
 
     if (tapTimerRef.current) {
       clearTimeout(tapTimerRef.current);
     }
 
-    if (tapCountRef.current >= 5) {
+    if (tapCountRef.current >= 7) {
       tapCountRef.current = 0;
       router.push('/admin');
       return;
     }
 
+    // Navigate to home after delay if no more taps
     tapTimerRef.current = setTimeout(() => {
+      if (tapCountRef.current > 0 && tapCountRef.current < 7) {
+        router.push('/');
+      }
       tapCountRef.current = 0;
-    }, 2000);
+    }, 500);
   };
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo - tap 5 times for admin */}
-          <Link href="/" className="flex items-center space-x-2" onClick={handleLogoTap}>
+          {/* Logo - tap 7 times for admin */}
+          <div
+            className="flex items-center space-x-2 cursor-pointer"
+            onClick={handleLogoTap}
+          >
             <MapPin className="h-8 w-8 text-tunisia-red" />
             <span className="text-xl font-bold text-gray-900">
               Yalla<span className="text-tunisia-red">Habibi</span>
             </span>
-          </Link>
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
