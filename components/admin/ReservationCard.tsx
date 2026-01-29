@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Mail, Phone, Calendar, MessageSquare, MoreVertical, Trash2, StickyNote } from 'lucide-react';
+import { Mail, Phone, Calendar, MessageSquare, MoreVertical, Trash2, StickyNote, CheckCircle, XCircle, X } from 'lucide-react';
 import { ReservationWithProgram, ReservationStatus } from '@/types/database';
 import { formatDate, formatPrice, cn } from '@/lib/utils';
 
@@ -23,7 +23,85 @@ export default function ReservationCard({ reservation }: ReservationCardProps) {
   const [notes, setNotes] = useState(reservation.admin_notes || '');
   const [showNotes, setShowNotes] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showEmailOptions, setShowEmailOptions] = useState(false);
   const [updating, setUpdating] = useState(false);
+
+  const programTitle = reservation.program?.title || 'votre voyage';
+  const programPrice = reservation.program?.price ? formatPrice(reservation.program.price) : '';
+  const programDates = reservation.program ?
+    `${formatDate(reservation.program.start_date)} - ${formatDate(reservation.program.end_date)}` : '';
+
+  const getAcceptEmailTemplate = () => {
+    const subject = encodeURIComponent(`✅ Confirmation de votre réservation - ${programTitle} | Yalla Habibi`);
+    const body = encodeURIComponent(
+`Cher(e) ${reservation.full_name},
+
+Nous avons le plaisir de vous confirmer votre réservation pour le programme suivant :
+
+📍 Programme : ${programTitle}
+📅 Dates : ${programDates}
+💰 Prix : ${programPrice}
+
+Votre réservation a été acceptée et confirmée. Notre équipe vous contactera prochainement pour finaliser les détails de votre voyage.
+
+Documents à préparer :
+- Copie de votre passeport/CIN
+- Informations de contact d'urgence
+
+Pour toute question, n'hésitez pas à nous contacter :
+📞 +216 27 419 167
+📧 yallahabibi.voyage@gmail.com
+
+Nous vous remercions de votre confiance et avons hâte de vous faire découvrir les merveilles de la Tunisie !
+
+Cordialement,
+L'équipe Yalla Habibi
+🌴 Discover Tunisia with us
+
+---
+Yalla Habibi - Tunisia Travel
+Hammamet, Tunisia
+www.yallahabibi.tn`
+    );
+    return `mailto:${reservation.email}?subject=${subject}&body=${body}`;
+  };
+
+  const getRefuseEmailTemplate = () => {
+    const subject = encodeURIComponent(`Concernant votre demande de réservation - ${programTitle} | Yalla Habibi`);
+    const body = encodeURIComponent(
+`Cher(e) ${reservation.full_name},
+
+Nous vous remercions de l'intérêt que vous portez à nos services et pour votre demande de réservation concernant :
+
+📍 Programme : ${programTitle}
+📅 Dates : ${programDates}
+
+Après étude de votre demande, nous sommes au regret de vous informer que nous ne sommes pas en mesure de confirmer cette réservation pour les raisons suivantes :
+
+☐ Le programme est complet pour les dates sélectionnées
+☐ Les dates demandées ne sont plus disponibles
+☐ Autre raison : _______________
+
+Nous vous invitons à consulter nos autres programmes disponibles sur notre site ou à nous contacter pour trouver une alternative qui correspond à vos attentes.
+
+Nous restons à votre disposition pour toute question.
+
+📞 +216 27 419 167
+📧 yallahabibi.voyage@gmail.com
+
+Nous espérons avoir le plaisir de vous accompagner lors d'un prochain voyage.
+
+Cordialement,
+L'équipe Yalla Habibi
+🌴 Discover Tunisia with us
+
+---
+Yalla Habibi - Tunisia Travel
+Hammamet, Tunisia
+www.yallahabibi.tn`
+    );
+    return `mailto:${reservation.email}?subject=${subject}&body=${body}`;
+  };
 
   const updateStatus = async (newStatus: ReservationStatus) => {
     setUpdating(true);
@@ -269,13 +347,13 @@ export default function ReservationCard({ reservation }: ReservationCardProps) {
 
       {/* Actions */}
       <div className="mt-6 pt-4 border-t flex flex-wrap gap-3">
-        <a
-          href={`mailto:${reservation.email}?subject=Re: Your Yalla Habibi Reservation - ${reservation.program?.title || 'Inquiry'}`}
+        <button
+          onClick={() => setShowEmailOptions(true)}
           className="btn-primary text-sm"
         >
           <Mail className="h-4 w-4 mr-2" />
           Reply via Email
-        </a>
+        </button>
         <a
           href={`https://wa.me/${reservation.phone.replace(/[^0-9]/g, '')}`}
           target="_blank"
@@ -286,6 +364,72 @@ export default function ReservationCard({ reservation }: ReservationCardProps) {
           WhatsApp
         </a>
       </div>
+
+      {/* Email Options Modal */}
+      {showEmailOptions && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Répondre à {reservation.full_name}
+              </h3>
+              <button
+                onClick={() => setShowEmailOptions(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5 text-gray-500" />
+              </button>
+            </div>
+
+            <p className="text-sm text-gray-600 mb-6">
+              Choisissez le type de réponse pour cette réservation :
+            </p>
+
+            <div className="space-y-3">
+              <a
+                href={getAcceptEmailTemplate()}
+                onClick={() => {
+                  setShowEmailOptions(false);
+                  updateStatus('confirmed');
+                }}
+                className="flex items-center w-full p-4 border-2 border-green-200 bg-green-50 rounded-xl hover:bg-green-100 hover:border-green-300 transition-colors"
+              >
+                <div className="p-3 bg-green-500 rounded-lg mr-4">
+                  <CheckCircle className="h-6 w-6 text-white" />
+                </div>
+                <div className="text-left">
+                  <p className="font-semibold text-green-800">Accepter la réservation</p>
+                  <p className="text-sm text-green-600">Envoyer un email de confirmation</p>
+                </div>
+              </a>
+
+              <a
+                href={getRefuseEmailTemplate()}
+                onClick={() => {
+                  setShowEmailOptions(false);
+                  updateStatus('cancelled');
+                }}
+                className="flex items-center w-full p-4 border-2 border-red-200 bg-red-50 rounded-xl hover:bg-red-100 hover:border-red-300 transition-colors"
+              >
+                <div className="p-3 bg-red-500 rounded-lg mr-4">
+                  <XCircle className="h-6 w-6 text-white" />
+                </div>
+                <div className="text-left">
+                  <p className="font-semibold text-red-800">Refuser la réservation</p>
+                  <p className="text-sm text-red-600">Envoyer un email de refus</p>
+                </div>
+              </a>
+            </div>
+
+            <button
+              onClick={() => setShowEmailOptions(false)}
+              className="w-full mt-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+            >
+              Annuler
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
