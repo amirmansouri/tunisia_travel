@@ -1,4 +1,4 @@
-import { Server, Database, Globe, Clock, CheckCircle, AlertTriangle, ExternalLink } from 'lucide-react';
+import { Server, Database, Globe, Clock, CheckCircle, AlertTriangle, ExternalLink, Cloud, Image } from 'lucide-react';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminHeader from '@/components/admin/AdminHeader';
 import MonitorStats from '@/components/admin/MonitorStats';
@@ -32,6 +32,14 @@ export default function AdminMonitorPage() {
       usage: '500 MB Database, 1 GB Storage',
       expiry: 'Pauses after 7 days inactive',
       url: 'https://supabase.com/dashboard/project/cpkutlpasefpqyvbhfun',
+    },
+    {
+      name: 'Cloudinary',
+      status: 'active',
+      plan: 'Free Tier',
+      usage: '25 GB Storage, 25 GB Bandwidth/month',
+      expiry: 'No expiration',
+      url: 'https://console.cloudinary.com/console/c-dgzx8bbap',
     },
   ];
 
@@ -80,6 +88,10 @@ export default function AdminMonitorPage() {
                         {service.name === 'Vercel' ? (
                           <div className="p-3 bg-black rounded-lg">
                             <Globe className="h-6 w-6 text-white" />
+                          </div>
+                        ) : service.name === 'Cloudinary' ? (
+                          <div className="p-3 bg-blue-500 rounded-lg">
+                            <Cloud className="h-6 w-6 text-white" />
                           </div>
                         ) : (
                           <div className="p-3 bg-green-600 rounded-lg">
@@ -136,7 +148,7 @@ export default function AdminMonitorPage() {
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Free Tier Limits</h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                   <h3 className="font-medium text-gray-900 flex items-center">
                     <Globe className="h-5 w-5 mr-2" />
@@ -163,6 +175,20 @@ export default function AdminMonitorPage() {
                     <li>• 50,000 monthly active users</li>
                     <li>• Project pauses after 7 days of inactivity</li>
                     <li>• 2 free projects</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="font-medium text-gray-900 flex items-center">
+                    <Cloud className="h-5 w-5 mr-2" />
+                    Cloudinary (Free Plan)
+                  </h3>
+                  <ul className="mt-2 ml-7 space-y-1 text-sm text-gray-600">
+                    <li>• 25 GB storage</li>
+                    <li>• 25 GB bandwidth per month</li>
+                    <li>• 25,000 transformations/month</li>
+                    <li>• Auto image optimization</li>
+                    <li>• No expiration</li>
                   </ul>
                 </div>
               </div>
@@ -199,6 +225,16 @@ export default function AdminMonitorPage() {
                   >
                     <Clock className="h-4 w-4 mr-2" />
                     Cron-Job.org
+                    <ExternalLink className="h-3 w-3 ml-1" />
+                  </a>
+                  <a
+                    href="https://cloudinary.com/documentation"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    <Cloud className="h-4 w-4 mr-2" />
+                    Cloudinary Docs
                     <ExternalLink className="h-3 w-3 ml-1" />
                   </a>
                 </div>
