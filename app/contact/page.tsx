@@ -40,7 +40,7 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-900">Address</h3>
-                        <p className="text-gray-600 mt-1">Hammamet, Tunisia</p>
+                        <p className="text-gray-600 mt-1">Cannes, France</p>
                       </div>
                     </div>
 
@@ -62,8 +62,8 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-900">Phone</h3>
-                        <a href="tel:+21627419167" className="text-tunisia-blue hover:underline mt-1 block">
-                          +216 27 419 167
+                        <a href="tel:+33603536053" className="text-tunisia-blue hover:underline mt-1 block">
+                          +33 6 03 53 60 53
                         </a>
                       </div>
                     </div>

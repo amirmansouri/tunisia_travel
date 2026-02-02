@@ -63,7 +63,7 @@ export default function RootLayout({
           <FavoritesProvider>
             <VisitorTracker />
             {children}
-            <WhatsAppButton phoneNumber="+21627419167" />
+            <WhatsAppButton phoneNumber="+33603536053" />
             <PWAInstall />
           </FavoritesProvider>
         </LanguageProvider>
