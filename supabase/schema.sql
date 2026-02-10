@@ -202,3 +202,272 @@ GRANT ALL ON reservations TO authenticated;
 -- Grant permissions on views
 GRANT SELECT ON public_programs_with_stats TO anon;
 GRANT SELECT ON public_programs_with_stats TO authenticated;
+
+-- =====================================================
+-- TABLE: live_events
+-- Stores live events (matches and general events)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS live_events (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    event_type TEXT NOT NULL CHECK (event_type IN ('match', 'general')),
+    name TEXT NOT NULL,
+    description TEXT,
+    location TEXT,
+    event_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    image_url TEXT,
+    is_active BOOLEAN DEFAULT true,
+    -- Match-specific fields (null for general events)
+    team_a TEXT,
+    team_b TEXT,
+    score_a INTEGER DEFAULT 0,
+    score_b INTEGER DEFAULT 0,
+    match_status TEXT CHECK (match_status IN ('upcoming', 'live', 'halftime', 'finished', NULL)),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_live_events_active ON live_events(is_active);
+CREATE INDEX IF NOT EXISTS idx_live_events_event_date ON live_events(event_date);
+CREATE INDEX IF NOT EXISTS idx_live_events_type ON live_events(event_type);
+
+-- Trigger to auto-update updated_at on live_events
+DROP TRIGGER IF EXISTS update_live_events_updated_at ON live_events;
+CREATE TRIGGER update_live_events_updated_at
+    BEFORE UPDATE ON live_events
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- Enable RLS on live_events
+ALTER TABLE live_events ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public can view active events"
+    ON live_events FOR SELECT TO anon
+    USING (is_active = true);
+
+CREATE POLICY "Service role has full access to live_events"
+    ON live_events FOR ALL TO authenticated
+    USING (true) WITH CHECK (true);
+
+CREATE POLICY "Postgres role has full access to live_events"
+    ON live_events FOR ALL TO postgres
+    USING (true) WITH CHECK (true);
+
+GRANT SELECT ON live_events TO anon;
+GRANT ALL ON live_events TO authenticated;
+
+-- =====================================================
+-- TABLE: site_settings
+-- Key-value store for global site settings
+-- =====================================================
+CREATE TABLE IF NOT EXISTS site_settings (
+    key TEXT PRIMARY KEY,
+    value JSONB NOT NULL DEFAULT '{}',
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Trigger to auto-update updated_at on site_settings
+DROP TRIGGER IF EXISTS update_site_settings_updated_at ON site_settings;
+CREATE TRIGGER update_site_settings_updated_at
+    BEFORE UPDATE ON site_settings
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- Enable RLS on site_settings
+ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public can read site settings"
+    ON site_settings FOR SELECT TO anon
+    USING (true);
+
+CREATE POLICY "Service role has full access to site_settings"
+    ON site_settings FOR ALL TO authenticated
+    USING (true) WITH CHECK (true);
+
+CREATE POLICY "Postgres role has full access to site_settings"
+    ON site_settings FOR ALL TO postgres
+    USING (true) WITH CHECK (true);
+
+GRANT SELECT ON site_settings TO anon;
+GRANT ALL ON site_settings TO authenticated;
+
+-- Seed the live events toggle
+INSERT INTO site_settings (key, value)
+VALUES ('live_events_enabled', '{"enabled": false}')
+ON CONFLICT (key) DO NOTHING;
+
+-- =====================================================
+-- TABLE: tournaments
+-- Stores pétanque tournaments
+-- =====================================================
+CREATE TABLE IF NOT EXISTS tournaments (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name TEXT NOT NULL,
+    description TEXT,
+    location TEXT,
+    start_date TIMESTAMP WITH TIME ZONE,
+    end_date TIMESTAMP WITH TIME ZONE,
+    image_url TEXT,
+    max_teams INTEGER DEFAULT 32,
+    num_pools INTEGER DEFAULT 4,
+    status TEXT NOT NULL DEFAULT 'registration' CHECK (status IN ('registration', 'pools', 'knockout', 'finished')),
+    is_published BOOLEAN DEFAULT false,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_tournaments_status ON tournaments(status);
+CREATE INDEX IF NOT EXISTS idx_tournaments_published ON tournaments(is_published);
+CREATE INDEX IF NOT EXISTS idx_tournaments_start_date ON tournaments(start_date);
+
+DROP TRIGGER IF EXISTS update_tournaments_updated_at ON tournaments;
+CREATE TRIGGER update_tournaments_updated_at
+    BEFORE UPDATE ON tournaments
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+ALTER TABLE tournaments ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public can view published tournaments"
+    ON tournaments FOR SELECT TO anon
+    USING (is_published = true);
+
+CREATE POLICY "Service role has full access to tournaments"
+    ON tournaments FOR ALL TO authenticated
+    USING (true) WITH CHECK (true);
+
+CREATE POLICY "Postgres role has full access to tournaments"
+    ON tournaments FOR ALL TO postgres
+    USING (true) WITH CHECK (true);
+
+GRANT SELECT ON tournaments TO anon;
+GRANT ALL ON tournaments TO authenticated;
+
+-- =====================================================
+-- TABLE: tournament_teams
+-- Stores teams registered for tournaments
+-- =====================================================
+CREATE TABLE IF NOT EXISTS tournament_teams (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tournament_id UUID NOT NULL REFERENCES tournaments(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    country TEXT,
+    captain_name TEXT,
+    captain_phone TEXT,
+    captain_email TEXT,
+    pool TEXT,
+    seed INTEGER,
+    is_confirmed BOOLEAN DEFAULT false,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_tournament_teams_tournament ON tournament_teams(tournament_id);
+CREATE INDEX IF NOT EXISTS idx_tournament_teams_pool ON tournament_teams(pool);
+
+ALTER TABLE tournament_teams ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public can view tournament teams"
+    ON tournament_teams FOR SELECT TO anon
+    USING (EXISTS (SELECT 1 FROM tournaments WHERE tournaments.id = tournament_teams.tournament_id AND tournaments.is_published = true));
+
+CREATE POLICY "Public can register teams"
+    ON tournament_teams FOR INSERT TO anon
+    WITH CHECK (EXISTS (SELECT 1 FROM tournaments WHERE tournaments.id = tournament_teams.tournament_id AND tournaments.is_published = true AND tournaments.status = 'registration'));
+
+CREATE POLICY "Service role has full access to tournament_teams"
+    ON tournament_teams FOR ALL TO authenticated
+    USING (true) WITH CHECK (true);
+
+CREATE POLICY "Postgres role has full access to tournament_teams"
+    ON tournament_teams FOR ALL TO postgres
+    USING (true) WITH CHECK (true);
+
+GRANT SELECT, INSERT ON tournament_teams TO anon;
+GRANT ALL ON tournament_teams TO authenticated;
+
+-- =====================================================
+-- TABLE: tournament_matches
+-- Stores matches within tournaments
+-- =====================================================
+CREATE TABLE IF NOT EXISTS tournament_matches (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tournament_id UUID NOT NULL REFERENCES tournaments(id) ON DELETE CASCADE,
+    round_type TEXT NOT NULL CHECK (round_type IN ('pool', 'quarter', 'semi', 'final', '3rd_place')),
+    pool TEXT,
+    match_number INTEGER NOT NULL DEFAULT 0,
+    team_a_id UUID REFERENCES tournament_teams(id) ON DELETE SET NULL,
+    team_b_id UUID REFERENCES tournament_teams(id) ON DELETE SET NULL,
+    score_a INTEGER DEFAULT 0,
+    score_b INTEGER DEFAULT 0,
+    status TEXT NOT NULL DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'live', 'finished')),
+    scheduled_time TIMESTAMP WITH TIME ZONE,
+    court TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_tournament_matches_tournament ON tournament_matches(tournament_id);
+CREATE INDEX IF NOT EXISTS idx_tournament_matches_round ON tournament_matches(round_type);
+CREATE INDEX IF NOT EXISTS idx_tournament_matches_status ON tournament_matches(status);
+
+DROP TRIGGER IF EXISTS update_tournament_matches_updated_at ON tournament_matches;
+CREATE TRIGGER update_tournament_matches_updated_at
+    BEFORE UPDATE ON tournament_matches
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+ALTER TABLE tournament_matches ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public can view tournament matches"
+    ON tournament_matches FOR SELECT TO anon
+    USING (EXISTS (SELECT 1 FROM tournaments WHERE tournaments.id = tournament_matches.tournament_id AND tournaments.is_published = true));
+
+CREATE POLICY "Service role has full access to tournament_matches"
+    ON tournament_matches FOR ALL TO authenticated
+    USING (true) WITH CHECK (true);
+
+CREATE POLICY "Postgres role has full access to tournament_matches"
+    ON tournament_matches FOR ALL TO postgres
+    USING (true) WITH CHECK (true);
+
+GRANT SELECT ON tournament_matches TO anon;
+GRANT ALL ON tournament_matches TO authenticated;
+
+-- =====================================================
+-- TABLE: tournament_standings
+-- Stores pool standings for tournaments
+-- =====================================================
+CREATE TABLE IF NOT EXISTS tournament_standings (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tournament_id UUID NOT NULL REFERENCES tournaments(id) ON DELETE CASCADE,
+    team_id UUID NOT NULL REFERENCES tournament_teams(id) ON DELETE CASCADE,
+    pool TEXT NOT NULL,
+    played INTEGER DEFAULT 0,
+    won INTEGER DEFAULT 0,
+    lost INTEGER DEFAULT 0,
+    drawn INTEGER DEFAULT 0,
+    points_for INTEGER DEFAULT 0,
+    points_against INTEGER DEFAULT 0,
+    points INTEGER DEFAULT 0,
+    rank INTEGER DEFAULT 0
+);
+
+CREATE INDEX IF NOT EXISTS idx_tournament_standings_tournament ON tournament_standings(tournament_id);
+CREATE INDEX IF NOT EXISTS idx_tournament_standings_pool ON tournament_standings(pool);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_tournament_standings_unique ON tournament_standings(tournament_id, team_id);
+
+ALTER TABLE tournament_standings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public can view tournament standings"
+    ON tournament_standings FOR SELECT TO anon
+    USING (EXISTS (SELECT 1 FROM tournaments WHERE tournaments.id = tournament_standings.tournament_id AND tournaments.is_published = true));
+
+CREATE POLICY "Service role has full access to tournament_standings"
+    ON tournament_standings FOR ALL TO authenticated
+    USING (true) WITH CHECK (true);
+
+CREATE POLICY "Postgres role has full access to tournament_standings"
+    ON tournament_standings FOR ALL TO postgres
+    USING (true) WITH CHECK (true);
+
+GRANT SELECT ON tournament_standings TO anon;
+GRANT ALL ON tournament_standings TO authenticated;

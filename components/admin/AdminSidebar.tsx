@@ -13,6 +13,8 @@ import {
   X,
   Monitor,
   CalendarDays,
+  Radio,
+  Trophy,
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -22,6 +24,8 @@ const navigation = [
   { name: 'Programs', href: '/admin/programs', icon: Map },
   { name: 'Reservations', href: '/admin/reservations', icon: Users },
   { name: 'Calendar', href: '/admin/calendar', icon: CalendarDays },
+  { name: 'Live Events', href: '/admin/events', icon: Radio },
+  { name: 'Tournaments', href: '/admin/tournaments', icon: Trophy },
   { name: 'Visitors', href: '/admin/visitors', icon: Globe },
   { name: 'Monitor', href: '/admin/monitor', icon: Monitor },
 ];
